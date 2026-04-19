@@ -1,0 +1,16 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Opção adicionar Funcionário
+Sistema --> Gerente : Pede dados do funcionário
+Gerente -> Sistema : preenche os dados do funcionário
+Sistema -> Sistema : adiciona o novo funcionário
+Sistema -> Gerente : exibe mensagem de sucesso
+
+alt "Produto selecionado: true":
+    Sistema --> Gerente : Return true
+else "Produto selecionado: false"
+    Sistema --> Gerente : return failure
+end
+@enduml

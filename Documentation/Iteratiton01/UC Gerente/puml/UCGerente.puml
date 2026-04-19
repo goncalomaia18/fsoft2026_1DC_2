@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+
+Gerente -> (Realizar Encomenda ao Fornecedor)
+Gerente -> (Remover Funcionários)
+Gerente -> (Ver Funcionários)
+Gerente -> (Adicionar Funcionários)
+Gerente -> (Modificar Encomendas do Cliente)
+Gerente -> (Listar Encomendas do Cliente)
+Gerente -> (Ver Clientes)
+Gerente -> (Listar Clientes)
+Gerente -> (Eliminar Produto)
+Gerente -> (Editar Produto)
+Gerente -> (Ver Produto)
+Gerente -> (Listar Produto)
+Gerente -> (Criar Produto)
+Gerente -> (Encerrar Sessão)
+Gerente -> (Iniciar Sessão)
+
+@enduml

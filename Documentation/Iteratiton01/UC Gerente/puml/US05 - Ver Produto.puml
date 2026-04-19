@@ -1,0 +1,15 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Solicita ver produto
+Sistema --> Gerente : Lista produtos
+Gerente -> Sistema : Seleciona o produto
+Sistema -> Sistema : Procura as informações do produto
+
+alt "Informações existem: true":
+    Sistema --> Gerente : Retorna detalhes do produto
+else "Informações existem: false"
+    Sistema --> Gerente : Retorna Erro
+end
+@enduml
