@@ -11,21 +11,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ca6d4454-4efd-4b66-9f7b-ebf507a4581c" name="Changes" comment="UC">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Login.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Iniciar Sessão.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC02 - Terminar Sessão.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC08 - Terminar Sessão.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC03 - Criar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC03 - Adicionar Produto.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC04 - Listar Produtos.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC05 - Ver Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC02 - Ver Produto.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC06 - Editar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC04 - Editar Produto.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC07 - Eliminar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC05 - Eliminar Produto.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC08 - Listar Clientes.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC09 - Ver Cliente.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC10 - Listar Encomendas do Cliente.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC06 - Ver Encomenda do Cliente.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC11 - Modificar Encomenda do Cliente.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC12 – Adicionar funcionário.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC13 - Ver Funcionário.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC14- Remover Funcionário.puml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC15 - Realiza Ecomendas ao Fornecedor.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC07 - Realiza Ecomendas ao Fornecedor.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/Modelo de Domínio.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Iniciar Sessão.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Iniciar Sessão.puml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UCGerente.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UCGerente.puml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +80,7 @@
       <workItem from="1776174255991" duration="3475000" />
       <workItem from="1776592852602" duration="5984000" />
       <workItem from="1776605900376" duration="60000" />
-      <workItem from="1776605982812" duration="3841000" />
+      <workItem from="1776605982812" duration="5469000" />
     </task>
     <task id="LOCAL-00001" summary="modelo de dominio">
       <option name="closed" value="true" />
@@ -111,7 +98,15 @@
       <option name="project" value="LOCAL" />
       <updated>1776606036836</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="UC">
+      <option name="closed" value="true" />
+      <created>1776611469036</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1776611469036</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
