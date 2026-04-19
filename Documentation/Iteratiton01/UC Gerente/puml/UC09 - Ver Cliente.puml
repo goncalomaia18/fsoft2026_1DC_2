@@ -1,0 +1,15 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Solicita ver cliente
+Sistema --> Gerente : Lista clientes
+Gerente -> Sistema : Seleciona o cliente
+Sistema -> Sistema : Procura as informações do cliente
+
+alt "Informações existem: true":
+    Sistema --> Gerente : Retorna informações do cliente
+else "Informações existem: false"
+    Sistema --> Gerente : Retorna Erro
+end
+@enduml
