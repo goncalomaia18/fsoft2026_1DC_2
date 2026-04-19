@@ -1,0 +1,19 @@
+@startuml
+ actor Gerente
+ participant Sistema
+
+ Gerente -> Sistema : Solicita modificar encomenda do cliente
+ Sistema --> Gerente : Lista de clientes
+ Gerente -> Sistema : Seleciona o cliente
+ Sistema -> Sistema : Verifica se o cliente tem encomendas
+ Sistema --> Gerente : Lista as encomendas do cliente
+ Gerente -> Sistema : Seleciona a encomenda
+ Sistema --> Gerente : Apresenta formulario de alteração
+ Gerente -> Sistema : Submete alterações
+
+ alt "Alterações completas: true":
+     Sistema --> Gerente : Retorna Sucesso
+ else "Alterações completas: false"
+     Sistema --> Gerente : Retorna Erro
+ end
+@enduml

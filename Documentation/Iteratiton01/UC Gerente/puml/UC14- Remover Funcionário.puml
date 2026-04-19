@@ -1,0 +1,15 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Opção remover Funcionário
+Sistema --> Gerente : Pergunta se confirma a remoção
+Gerente -> Sistema : Confirma a remoção
+Sistema -> Sistema : remove o funcionário
+
+alt "Funcionário Removido: true":
+    Sistema --> Gerente : Retorna Sucesso
+else "Funcionário Removido: false"
+    Sistema --> Gerente : Retorna Erro
+end
+@enduml

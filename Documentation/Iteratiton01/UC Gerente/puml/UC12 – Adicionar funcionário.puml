@@ -1,0 +1,13 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Opção ver Funcionário
+Sistema --> Gerente : Mostra os dados do funcionário
+
+alt "Produto selecionado: true":
+    Sistema --> Gerente : Return true
+else "Produto selecionado: false"
+    Sistema --> Gerente : return failure
+end
+@enduml
