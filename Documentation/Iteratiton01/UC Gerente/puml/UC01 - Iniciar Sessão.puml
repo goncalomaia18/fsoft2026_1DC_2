@@ -1,0 +1,15 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Insere o nome de utilizador
+Gerente -> Sistema : Insere a palavra-passe
+Sistema -> Sistema : Verifica se tem utilizador registado
+Sistema -> Sistema : Verifica a palavra-passe
+
+alt "Sessão iniciada: true":
+    Sistema --> Gerente : Retorna sucesso
+else "Sessão iniciada: false"
+    Sistema --> Gerente : Retorna erro
+end
+@enduml

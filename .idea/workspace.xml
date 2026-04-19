@@ -9,7 +9,25 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca6d4454-4efd-4b66-9f7b-ebf507a4581c" name="Changes" comment="modelo de dominio" />
+    <list default="true" id="ca6d4454-4efd-4b66-9f7b-ebf507a4581c" name="Changes" comment="UC">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Login.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC01 - Iniciar Sessão.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC02 - Terminar Sessão.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC08 - Terminar Sessão.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC03 - Criar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC03 - Adicionar Produto.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC04 - Listar Produtos.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC05 - Ver Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC02 - Ver Produto.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC06 - Editar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC04 - Editar Produto.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC07 - Eliminar Produto.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC05 - Eliminar Produto.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC08 - Listar Clientes.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC09 - Ver Cliente.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC10 - Listar Encomendas do Cliente.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC06 - Ver Encomenda do Cliente.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC11 - Modificar Encomenda do Cliente.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC12 – Adicionar funcionário.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC13 - Ver Funcionário.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC14- Remover Funcionário.puml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC15 - Realiza Ecomendas ao Fornecedor.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UC07 - Realiza Ecomendas ao Fornecedor.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UCGerente.puml" beforeDir="false" afterPath="$PROJECT_DIR$/Documentation/Iteratiton01/UC Gerente/puml/UCGerente.puml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,25 +63,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultPlantUmlFileTemplate": "UML Use Case",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "maia",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CPPToolchains",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;maia&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -75,6 +93,7 @@
       <workItem from="1776174255991" duration="3475000" />
       <workItem from="1776592852602" duration="5984000" />
       <workItem from="1776605900376" duration="60000" />
+      <workItem from="1776605982812" duration="3841000" />
     </task>
     <task id="LOCAL-00001" summary="modelo de dominio">
       <option name="closed" value="true" />
@@ -84,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1776174750721</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="UC">
+      <option name="closed" value="true" />
+      <created>1776606036836</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1776606036836</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -92,6 +119,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="modelo de dominio" />
-    <option name="LAST_COMMIT_MESSAGE" value="modelo de dominio" />
+    <MESSAGE value="UC" />
+    <option name="LAST_COMMIT_MESSAGE" value="UC" />
   </component>
 </project>
