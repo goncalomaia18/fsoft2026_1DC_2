@@ -1,4 +1,4 @@
-@startuml
+/@startuml
 actor Gerente
 participant Sistema
 
