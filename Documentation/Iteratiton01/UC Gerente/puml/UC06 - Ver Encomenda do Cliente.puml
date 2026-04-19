@@ -1,0 +1,15 @@
+@startuml
+ actor Gerente
+ participant Sistema
+
+ Gerente -> Sistema : Solicita listar encomendas do cliente
+ Sistema --> Gerente : Lista de clientes
+ Gerente -> Sistema : Seleciona o cliente
+ Sistema -> Sistema : Verifica se existe encomendas do cliente
+
+ alt "Encomendas existem: true":
+     Sistema --> Gerente : Retorna a lista de encomendas do cliente
+ else "Encomendas existem: false"
+     Sistema --> Gerente : Retorna Erro
+ end
+@enduml

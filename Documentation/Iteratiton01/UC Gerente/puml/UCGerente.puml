@@ -1,20 +1,15 @@
 @startuml
 left to right direction
 
-Gerente -> (Realizar Encomenda ao Fornecedor)
-Gerente -> (Remover Funcionários)
-Gerente -> (Ver Funcionários)
-Gerente -> (Adicionar Funcionários)
-Gerente -> (Modificar Encomendas do Cliente)
-Gerente -> (Listar Encomendas do Cliente)
-Gerente -> (Ver Clientes)
-Gerente -> (Listar Clientes)
-Gerente -> (Eliminar Produto)
-Gerente -> (Editar Produto)
-Gerente -> (Ver Produto)
-Gerente -> (Listar Produto)
-Gerente -> (Criar Produto)
-Gerente -> (Encerrar Sessão)
-Gerente -> (Iniciar Sessão)
+actor Gerente
+
+Gerente --> (UC01 - Iniciar Sessão)
+Gerente --> (UC02 - Ver Produto)
+Gerente --> (UC03 - Adicionar Produto)
+Gerente --> (UC04 - Editar Produto)
+Gerente --> (UC05 - Eliminar Produto)
+Gerente --> (UC06 - Ver Encomenda do Cliente)
+Gerente --> (UC07 - Realizar Encomenda ao Fornecedor)
+Gerente --> (UC08 - Encerrar Sessão)
 
 @enduml
