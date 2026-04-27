@@ -1,0 +1,98 @@
+@startuml
+hide circle
+hide methods
+skinparam classAttributeIconSize 0
+
+class "Pesca Tudo" as PescaTudo {
+  Nome
+}
+
+class Utilizador {
+    Nome
+    email
+    Palavra-Passe
+}
+
+class Fornecedor {
+  Nome
+  IDFornecedor
+  Email
+  Palavra-Passe
+}
+
+class Gerente {
+  Email
+  Palavra-Passe
+}
+
+class Cliente {
+  Nome
+  Email
+  Palavra-Passe
+  Morada
+  NIF
+}
+
+class EncomendaFornecedor {
+  ID
+  Valor
+  Estado
+  Data
+}
+
+class Produto {
+  EAN
+  Nome
+  Marca
+  Stock
+  Categoria
+  Descrição
+  Preço do Fornecedor
+  Preço ao Cliente
+}
+
+class EncomendaCliente {
+  ID
+  Valor
+}
+
+class LinhaEncomenda {
+}
+
+class EncomendaProduto {
+}
+
+class Avaliação {
+  ID
+  Classificação
+  Comentario
+  Data
+}
+
+PescaTudo "1" -left- "0..*" Utilizador : contém
+PescaTudo "1" -- "0..*" Produto : contém
+
+Utilizador "1" -- "1" Gerente
+Utilizador "1" -- "1" Fornecedor
+Utilizador "1" -- "1" Cliente
+
+Fornecedor "1" -- "0..*" EncomendaFornecedor : contém
+
+Gerente "1" -- "0..*" EncomendaFornecedor : realiza
+
+EncomendaFornecedor "1" -- "1" EncomendaProduto: contém
+Produto "1..*" -- "1..*" EncomendaProduto : contém
+
+
+
+Cliente "1" -- "0..*" EncomendaCliente : efetua
+Cliente "1" -- "0..*" Avaliação : efetua
+
+
+Produto "1..*" -- "1..*" LinhaEncomenda : contém
+EncomendaCliente "1" -- "1" LinhaEncomenda : contém
+
+
+Produto "1" -- "0..*" Avaliação : contém
+
+@enduml
