@@ -83,15 +83,11 @@ Gerente "1" -- "0..*" EncomendaFornecedor : realiza
 EncomendaFornecedor "1" -- "1" EncomendaProduto: contém
 Produto "1..*" -- "1..*" EncomendaProduto : contém
 
-
-
 Cliente "1" -- "0..*" EncomendaCliente : efetua
 Cliente "1" -- "0..*" Avaliação : efetua
 
-
 Produto "1..*" -- "1..*" LinhaEncomenda : contém
 EncomendaCliente "1" -- "1" LinhaEncomenda : contém
-
 
 Produto "1" -- "0..*" Avaliação : contém
 

@@ -1,0 +1,44 @@
+@startuml
+' Define a pasta exterior
+package "Pesca Tudo" {
+
+    ' Define o ficheiro com o formato característico
+    file "main.cpp" as main
+
+    ' Define os pacotes internos
+    package views
+    package controllers
+    package exceptions
+    package services
+    package repo
+    package dto
+    package mappers
+    package model
+
+    ' --- Ligações da coluna central (de cima para baixo) ---
+    views ..down.> controllers
+    controllers ..down.> services
+    services ..down.> repo
+
+    ' --- Ligações do main.cpp ---
+    main ..> controllers
+    main ..down.> services
+    main ..down.> repo
+
+    ' --- Ligações para as Exceptions (à esquerda) ---
+    controllers .left.> exceptions
+    services .left.> exceptions
+
+    ' --- Ligações para a coluna da direita ---
+    views ..> dto
+    controllers ..> dto
+    services ..> dto
+    services ..> mappers
+
+    ' --- Ligações da coluna da direita (Mappers, DTO e Model) ---
+    mappers ..up.> dto
+    mappers ..down.> model
+    repo ..> model
+
+}
+@enduml
