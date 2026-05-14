@@ -1,0 +1,30 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "model: Pesca Tudo" as model
+
+activate controller
+
+' 1. UTILIZADOR ESTÁ NUM MENU (Manager, Client ou Supplier)
+controller -> view : 1. showUserMenu()
+activate view
+view --> controller : option (Logout)
+deactivate view
+
+' 2. O CONTROLLER MANDA O MODELO ENCERRAR A SESSÃO
+controller -> model : 2. logoutUser()
+activate model
+' O Modelo limpa quem está logado (ex: currentUser = null)
+model --> controller : success
+deactivate model
+
+' 3. O CONTROLLER VOLTA A MOSTRAR O MENU INICIAL
+controller -> view : 3. menuBegin()
+activate view
+view --> controller : option
+deactivate view
+
+deactivate controller
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "viewLogin: ViewLogin" as viewLogin
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+
+activate controller
+
+' 1. MENUS INICIAIS
+controller -> view : 1. menuBegin()
+activate view
+view --> controller : option
+deactivate view
+
+controller -> view : 2. menuLogin()
+activate view
+view --> controller : option
+deactivate view
+
+' 2. RECOLHA DE CREDENCIAIS PELA VIEW
+controller -> viewLogin : 3. getCredentials()
+activate viewLogin
+
+viewLogin -> utils : getString("email")
+activate utils
+utils --> viewLogin : email
+deactivate utils
+
+viewLogin -> utils : getString("password")
+activate utils
+utils --> viewLogin : password
+deactivate utils
+
+' A View devolve apenas os textos ao Controller
+viewLogin --> controller : credentials (email, password)
+deactivate viewLogin
+
+' 3. VERIFICAÇÃO FEITA PELO CONTROLLER NO MODELO GERAL
+controller -> model : 4. authenticateUser(credentials)
+activate model
+
+' O Modelo verifica as listas todas (Managers, Clients, Suppliers)
+' e devolve o Utilizador e o seu Papel/Role (ou erro/null se falhar)
+model --> controller : userRole (ex: "Gerente", "Cliente", "Fornecedor")
+deactivate model
+
+deactivate controller
+@enduml

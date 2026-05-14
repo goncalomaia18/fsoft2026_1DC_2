@@ -16,7 +16,7 @@ package "Pesca Tudo" {
     package model
 
     ' --- Ligações da coluna central (de cima para baixo) ---
-    views ..down.> controllers
+    controllers ..down.> views
     controllers ..down.> services
     services ..down.> repo
 

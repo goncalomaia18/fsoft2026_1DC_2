@@ -1,0 +1,69 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "supplierOrderList:\nSupplierOrderList" as supplierOrderList
+
+activate controller
+
+' [Fluxo inicial omitido. Assume-se que o Manager já fez login]
+
+controller -> view : 6. menuManageSuppliers()
+activate view
+view --> controller : option (Create Order)
+deactivate view
+
+' 1. A VIEW RECOLHE TODOS OS DADOS DA ENCOMENDA
+controller -> supplierView : getOrderData()
+activate supplierView
+
+supplierView -> utils : getNumber("supplier number")
+activate utils
+utils --> supplierView : supplierId
+deactivate utils
+
+supplierView -> utils : getNumber("product number")
+activate utils
+utils --> supplierView : productId
+deactivate utils
+
+supplierView -> utils : getNumber("quantity")
+activate utils
+utils --> supplierView : quantity
+deactivate utils
+
+' A View apenas devolve os dados em bruto ao Controller
+supplierView --> controller : orderData (supplierId, productId, quantity)
+deactivate supplierView
+
+' 2, 3 e 4. O CONTROLLER DELEGA TUDO AO MODEL
+controller -> model : createSupplierOrder(supplierId, productId, quantity)
+activate model
+
+' O Model é que procura o fornecedor no seu contentor interno
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+' O Model (ou a lista) é que atua como Creator (instancia a encomenda)
+create "order: SupplierOrder" as order
+model -> order : <<create>>(supplier, productId, quantity)
+
+' O Model adiciona à sua própria lista
+model -> supplierOrderList : add(order)
+activate supplierOrderList
+supplierOrderList --> model : success
+deactivate supplierOrderList
+
+' O Model avisa o Controller que correu tudo bem
+model --> controller : success
+deactivate model
+
+deactivate controller
+@enduml
