@@ -1,0 +1,79 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "viewLogin: ViewLogin" as viewLogin
+participant "viewProduct: ViewProduct" as viewProduct
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "productContainer:\nProductContainer" as productContainer
+
+activate controller
+' 3. MENUS DO MANAGER
+controller -> view : 3. menuManager()
+activate view
+view --> controller : option (Manage Products)
+deactivate view
+
+controller -> view : 4. menuManageProducts()
+activate view
+view --> controller : option (Add Product)
+deactivate view
+
+' 4. RECOLHA DE DADOS DO PRODUTO (Nova View)
+controller -> viewProduct : getNewProductData()
+activate viewProduct
+viewProduct -> utils : getNumber("ean")
+activate utils
+utils --> viewProduct : ean
+deactivate utils
+viewProduct -> utils : getString("nome")
+activate utils
+utils --> viewProduct : nome
+deactivate utils
+viewProduct -> utils : getString("marca")
+activate utils
+utils --> viewProduct : marca
+deactivate utils
+viewProduct -> utils : getNumber("stock")
+activate utils
+utils --> viewProduct : stock
+deactivate utils
+viewProduct -> utils : getString("categoria")
+activate utils
+utils --> viewProduct : categoria
+deactivate utils
+viewProduct -> utils : getString("descricao")
+activate utils
+utils --> viewProduct : descricao
+deactivate utils
+viewProduct -> utils : getFloat("precoFornecedor")
+activate utils
+utils --> viewProduct : precoFornecedor
+deactivate utils
+viewProduct -> utils : getFloat("precoCliente")
+activate utils
+utils --> viewProduct : precoCliente
+deactivate utils
+
+viewProduct --> controller : productData (ean, name, brand...)
+deactivate viewProduct
+
+' 5. DELEGAÇÃO DA CRIAÇÃO E ADIÇÃO AO MODELO
+controller -> model : addProduct(productData)
+activate model
+
+' O Model (ou o ProductContainer) atua como Creator
+create "product:\nProduct" as product
+model -> product : <<create>>(productData)
+
+' 6. MODELO ADICIONA AO SEU PRÓPRIO CONTENTOR INTERNO
+model -> productContainer : add(product)
+activate productContainer
+productContainer --> model : success
+deactivate productContainer
+
+model --> controller : success
+deactivate model
+@enduml
