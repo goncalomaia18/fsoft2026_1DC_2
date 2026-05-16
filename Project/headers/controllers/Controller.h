@@ -11,12 +11,12 @@
 
 class Controller {
 private:
-    StepUp &store;
+    PescaTudo &store;
     Client* loggedInClient = nullptr;                // Cliente autenticado
     std::map<std::string, Cart> clientCarts;         // Email → Carrinho
 
 public:
-    Controller(StepUp &store);
+    Controller(PescaTudo &store);
     void run();
 
     // Áreas principais
