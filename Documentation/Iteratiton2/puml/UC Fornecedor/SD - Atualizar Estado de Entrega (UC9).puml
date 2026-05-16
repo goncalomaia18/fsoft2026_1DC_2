@@ -1,0 +1,101 @@
+@startuml
+title SD - Atualizar Estado de Entrega
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "supplierOrderList:\nSupplierOrderList" as supplierOrderList
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (Update Delivery Status)
+deactivate view
+
+controller -> supplierView : getOrderData()
+activate supplierView
+
+supplierView -> utils : getNumber("order number")
+activate utils
+utils --> supplierView : orderId
+deactivate utils
+
+supplierView --> controller : orderId
+deactivate supplierView
+
+controller -> model : getSupplierOrderDetails(orderId)
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> supplierOrderList : get(orderId)
+activate supplierOrderList
+supplierOrderList --> model : order
+deactivate supplierOrderList
+
+model -> model : verifyOrderOwnership(order, supplier)
+model -> model : verifyDeliveryCompatibleStatus(order)
+
+alt order exists, belongs to supplier and can be delivered
+    model --> controller : orderDetails
+    controller -> supplierView : showCurrentDeliveryStatus(orderDetails)
+
+    controller -> supplierView : getNewDeliveryStatus()
+    activate supplierView
+
+    supplierView -> utils : getText("delivery status")
+    activate utils
+    utils --> supplierView : deliveryStatus
+    deactivate utils
+
+    supplierView -> utils : getText("delivery notes")
+    activate utils
+    utils --> supplierView : deliveryNotes
+    deactivate utils
+
+    supplierView --> controller : deliveryData(deliveryStatus, deliveryNotes)
+    deactivate supplierView
+
+    controller -> model : updateDeliveryStatus(orderId, deliveryStatus, deliveryNotes)
+
+    model -> model : validateDeliveryStatus(deliveryStatus)
+
+    alt delivery status valid
+        model -> supplierOrderList : get(orderId)
+        activate supplierOrderList
+        supplierOrderList --> model : order
+        deactivate supplierOrderList
+
+        model -> model : updateDeliveryData(order, deliveryStatus, deliveryNotes)
+
+        model -> supplierOrderList : update(order)
+        activate supplierOrderList
+        supplierOrderList --> model : success
+        deactivate supplierOrderList
+
+        model --> controller : success
+        controller -> supplierView : showSuccess()
+    else delivery status invalid
+        model --> controller : failure
+        controller -> supplierView : showError("Invalid delivery status")
+    end
+
+else order not confirmed or unauthorized
+    model --> controller : failure
+    controller -> supplierView : showError("Delivery status cannot be updated")
+end
+
+deactivate model
+
+@enduml
