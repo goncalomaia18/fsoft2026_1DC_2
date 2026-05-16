@@ -1,0 +1,37 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "model: Pesca Tudo" as model
+participant "productContainer:\nProductContainer" as productContainer
+participant "productView:\nProductView" as productView
+
+activate controller
+
+' 1. MENU GENÉRICO (Pode ser o menu do Cliente, do Manager, etc.)
+controller -> view : 1. showMenu()
+activate view
+view --> controller : option (View Products)
+deactivate view
+
+' 2 e 3. DELEGAÇÃO AO MODELO (Encapsulamento Correto)
+controller -> model : 2. getProductsList()
+activate model
+
+model -> productContainer : 3. getAll()
+activate productContainer
+productContainer --> model : productsList
+deactivate productContainer
+
+model --> controller : productsList
+deactivate model
+
+' 4. MANDAR A VIEW IMPRIMIR A LISTA
+controller -> productView : 4. printProducts(productsList)
+activate productView
+productView --> controller :
+deactivate productView
+
+deactivate controller
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Solicita eliminar produto
+Sistema --> Gerente : Lista produtos
+Gerente -> Sistema : Seleciona o produto
+Sistema -> Sistema : verifica se o produto existe
+Sistema --> Gerente : Apresenta confirmação de produto
+
+alt "Eliminar: true":
+    Sistema --> Gerente : Retorna Sucesso
+else "Eliminar: false"
+    Sistema --> Gerente : Retorna Erro
+end
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "clientView: ClientView" as clientView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "clientContainer:\nClientContainer" as clientContainer
+
+activate controller
+
+controller -> view : 6. menuManageClient()
+activate view
+view --> controller : option (View Client Orders)
+deactivate view
+
+' 7. OBTER A LISTA DE CLIENTES E MOSTRÁ-LA
+controller -> model : getClientsList()
+activate model
+model -> clientContainer : getClientsList()
+activate clientContainer
+clientContainer --> model : clientsList
+deactivate clientContainer
+model --> controller : clientsList
+deactivate model
+
+
+controller -> clientView : showClients(clientsList)
+activate clientView
+clientView --> controller :
+deactivate clientView
+
+' 8. PERGUNTAR QUAL É O CLIENTE
+controller -> clientView : askClientID()
+activate clientView
+clientView -> utils : getNumber()
+activate utils
+utils --> clientView : clientID
+deactivate utils
+clientView --> controller : targetClientID
+deactivate clientView
+
+' 9. OBTER AS ENCOMENDAS DESSE CLIENTE E MOSTRÁ-LAS
+controller -> model : getClientOrders(targetClientID)
+activate model
+model -> clientContainer : getClientOrders(targetClientID)
+activate clientContainer
+clientContainer --> model : clientOrders
+deactivate clientContainer
+model --> controller : clientOrders
+deactivate model
+
+controller -> clientView : showOrders(clientOrders)
+activate clientView
+clientView --> controller :
+deactivate clientView
+@enduml

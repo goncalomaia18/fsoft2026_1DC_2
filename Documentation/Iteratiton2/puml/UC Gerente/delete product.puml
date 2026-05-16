@@ -1,0 +1,49 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "viewLogin: ViewLogin" as viewLogin
+participant "productView: ProductView" as productView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "productContainer\n:ProductContainer" as productContainer
+
+activate controller
+
+' 3. MENUS DO MANAGER
+controller -> view : 3. menuManager()
+activate view
+view --> controller : option (Manage Products)
+deactivate view
+
+controller -> view : 4. menuManageProducts()
+activate view
+view --> controller : option (Delete Product)
+deactivate view
+
+' 7. PEDIR O NÚMERO/ID DO PRODUTO A ELIMINAR (Mantém-se igual)
+controller -> productView : askProductNumber()
+activate productView
+productView -> utils : getNumber("ean")
+activate utils
+utils --> productView : number
+deactivate utils
+productView --> controller : targetNumber
+deactivate productView
+
+' 8. DELEGAR A REMOÇÃO AO MODELO (Corrigido)
+controller -> model : removeProduct(targetNumber)
+activate model
+
+' 9. O MODELO GERE O SEU CONTENTOR
+model -> productContainer : remove(targetNumber)
+activate productContainer
+productContainer --> model : success (true/false)
+deactivate productContainer
+
+model --> controller : success (true/false)
+deactivate model
+
+deactivate controller
+@enduml

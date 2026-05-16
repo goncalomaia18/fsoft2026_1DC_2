@@ -1,0 +1,91 @@
+@startuml
+hide footbox
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "viewLogin: ViewLogin" as viewLogin
+participant "viewProduct: ViewProduct" as viewProduct
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "productContainer\n:ProductContainer" as productContainer
+participant "product:\nProduct" as product
+
+activate controller
+
+' 2. MENUS DO MANAGER
+controller -> view : 2. menuManager()
+activate view
+view --> controller : option (Manage Products)
+deactivate view
+
+controller -> view : 3. menuManageProducts()
+activate view
+view --> controller : option (Edit Product)
+deactivate view
+
+' 3. PROCURAR O PRODUTO A EDITAR (Encapsulado no Model)
+controller -> viewProduct : askEAN()
+activate viewProduct
+viewProduct -> utils : getNumber("ean")
+activate utils
+utils --> viewProduct : targetEAN
+deactivate utils
+viewProduct --> controller : targetEAN
+deactivate viewProduct
+
+' O Controller pede diretamente ao Model
+controller -> model : getProduct(targetEAN)
+activate model
+model -> productContainer : get(targetEAN)
+activate productContainer
+productContainer --> model : product
+deactivate productContainer
+model --> controller : product
+deactivate model
+
+' 4. RECOLHER OS NOVOS DADOS
+controller -> viewProduct : getUpdatedData(product)
+activate viewProduct
+viewProduct -> utils : getString("nome")
+activate utils
+utils --> viewProduct : nome
+deactivate utils
+viewProduct -> utils : getString("marca")
+activate utils
+utils --> viewProduct : marca
+deactivate utils
+viewProduct -> utils : getNumber("stock")
+activate utils
+utils --> viewProduct : stock
+deactivate utils
+viewProduct -> utils : getString("categoria")
+activate utils
+utils --> viewProduct : categoria
+deactivate utils
+viewProduct -> utils : getString("descricao")
+activate utils
+utils --> viewProduct : descricao
+deactivate utils
+viewProduct -> utils : getFloat("precoFornecedor")
+activate utils
+utils --> viewProduct : precoFornecedor
+deactivate utils
+viewProduct -> utils : getFloat("precoCliente")
+activate utils
+utils --> viewProduct : precoCliente
+deactivate utils
+viewProduct --> controller : updatedData
+deactivate viewProduct
+
+' 5. APLICAR A EDIÇÃO (Delegado ao Model)
+controller -> model : updateProduct(targetEAN, updatedData)
+activate model
+model -> product : update(updatedData)
+activate product
+product --> model : success
+deactivate product
+model --> controller : success
+deactivate model
+
+deactivate controller
+@enduml

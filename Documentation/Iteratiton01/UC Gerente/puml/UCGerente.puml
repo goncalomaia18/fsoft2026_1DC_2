@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+
+actor Gerente
+
+rectangle {
+Gerente --> (UC01 - Iniciar Sessão)
+Gerente --> (UC02 - Ver Produto)
+Gerente --> (UC03 - Adicionar Produto)
+Gerente --> (UC04 - Editar Produto)
+Gerente --> (UC05 - Eliminar Produto)
+Gerente --> (UC06 - Ver Encomenda do Cliente)
+Gerente --> (UC07 - Realizar Encomenda ao Fornecedor)
+Gerente --> (UC08 - Encerrar Sessão)
+}
+
+@enduml

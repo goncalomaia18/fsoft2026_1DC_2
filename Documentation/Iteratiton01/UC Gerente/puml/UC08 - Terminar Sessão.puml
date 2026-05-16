@@ -1,0 +1,13 @@
+@startuml
+actor Gerente
+participant Sistema
+
+Gerente -> Sistema : Solicita terminar sessão
+
+alt "Sessão ativa: true":
+    Sistema -> Sistema : Termina a sessão atual
+    Sistema --> Gerente : Retorna sucesso
+else "Sessão ativa: false"
+    Sistema --> Gerente : Retorna erro
+end
+@enduml
