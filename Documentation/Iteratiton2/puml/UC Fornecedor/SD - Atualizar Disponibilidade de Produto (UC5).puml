@@ -1,0 +1,88 @@
+@startuml
+title SD - Atualizar Disponibilidade de Produto
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "productContainer:\nProductContainer" as productContainer
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (Update Product Availability)
+deactivate view
+
+controller -> supplierView : getProductData()
+activate supplierView
+
+supplierView -> utils : getNumber("product number")
+activate utils
+utils --> supplierView : productId
+deactivate utils
+
+supplierView --> controller : productId
+deactivate supplierView
+
+controller -> model : getCurrentAvailability(productId)
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> productContainer : get(productId)
+activate productContainer
+productContainer --> model : product
+deactivate productContainer
+
+model -> model : verifyProductOwnership(product, supplier)
+
+alt product exists and belongs to supplier
+    model --> controller : currentAvailability
+    controller -> supplierView : showCurrentAvailability(currentAvailability)
+
+    controller -> supplierView : getNewAvailability()
+    activate supplierView
+
+    supplierView -> utils : getNumber("quantity")
+    activate utils
+    utils --> supplierView : quantity
+    deactivate utils
+
+    supplierView --> controller : quantity
+    deactivate supplierView
+
+    controller -> model : updateProductAvailability(productId, quantity)
+
+    model -> model : validateQuantity(quantity)
+
+    alt quantity valid
+        model -> productContainer : updateAvailability(productId, quantity)
+        activate productContainer
+        productContainer --> model : success
+        deactivate productContainer
+
+        model --> controller : success
+        controller -> supplierView : showSuccess()
+    else quantity invalid
+        model --> controller : failure
+        controller -> supplierView : showError("Invalid quantity")
+    end
+
+else product not found or unauthorized
+    model --> controller : failure
+    controller -> supplierView : showError("Product not available")
+end
+
+deactivate model
+
+@enduml

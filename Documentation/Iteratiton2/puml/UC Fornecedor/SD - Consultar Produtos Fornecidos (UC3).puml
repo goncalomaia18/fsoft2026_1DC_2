@@ -1,0 +1,45 @@
+@startuml
+title SD - Consultar Produtos Fornecidos
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "productContainer:\nProductContainer" as productContainer
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (Consult Supplied Products)
+deactivate view
+
+controller -> model : getSuppliedProducts()
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> productContainer : getBySupplier(supplier)
+activate productContainer
+productContainer --> model : productList
+deactivate productContainer
+
+alt productList not empty
+    model --> controller : productList
+    controller -> supplierView : showSuppliedProducts(productList)
+else productList empty
+    model --> controller : failure
+    controller -> supplierView : showError("No supplied products")
+end
+
+deactivate model
+
+@enduml

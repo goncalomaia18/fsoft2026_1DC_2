@@ -1,0 +1,102 @@
+@startuml
+title SD - Responder a Pedido de Reposição
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "supplierOrderList:\nSupplierOrderList" as supplierOrderList
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (Respond Restock Order)
+deactivate view
+
+controller -> supplierView : getOrderData()
+activate supplierView
+
+supplierView -> utils : getNumber("order number")
+activate utils
+utils --> supplierView : orderId
+deactivate utils
+
+supplierView --> controller : orderId
+deactivate supplierView
+
+controller -> model : getSupplierOrderDetails(orderId)
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> supplierOrderList : get(orderId)
+activate supplierOrderList
+supplierOrderList --> model : order
+deactivate supplierOrderList
+
+model -> model : verifyOrderOwnership(order, supplier)
+model -> model : verifyPendingOrder(order)
+
+alt order exists, belongs to supplier and is pending
+    model --> controller : orderDetails
+    controller -> supplierView : showSupplierOrderDetails(orderDetails)
+
+    controller -> supplierView : getOrderResponse()
+    activate supplierView
+
+    supplierView -> utils : getText("response")
+    activate utils
+    utils --> supplierView : response
+    deactivate utils
+
+    supplierView --> controller : response
+    deactivate supplierView
+
+    controller -> model : respondSupplierOrder(orderId, response)
+
+    model -> model : validateResponse(response)
+
+    alt response valid
+        model -> supplierOrderList : get(orderId)
+        activate supplierOrderList
+        supplierOrderList --> model : order
+        deactivate supplierOrderList
+
+        alt response is total confirmation
+            model -> model : updateStatus(order, "Confirmed")
+        else response is partial confirmation
+            model -> model : updateStatus(order, "Partially Confirmed")
+        else response is rejection
+            model -> model : updateStatus(order, "Rejected")
+        end
+
+        model -> supplierOrderList : update(order)
+        activate supplierOrderList
+        supplierOrderList --> model : success
+        deactivate supplierOrderList
+
+        model --> controller : success
+        controller -> supplierView : showSuccess()
+    else response invalid
+        model --> controller : failure
+        controller -> supplierView : showError("Invalid response")
+    end
+
+else order not pending or unauthorized
+    model --> controller : failure
+    controller -> supplierView : showError("Order cannot be answered")
+end
+
+deactivate model
+
+@enduml

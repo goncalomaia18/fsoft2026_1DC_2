@@ -1,0 +1,59 @@
+@startuml
+title SD - Ver Pedido de Reposição
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "supplierOrderList:\nSupplierOrderList" as supplierOrderList
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (View Restock Order)
+deactivate view
+
+controller -> supplierView : getOrderData()
+activate supplierView
+
+supplierView -> utils : getNumber("order number")
+activate utils
+utils --> supplierView : orderId
+deactivate utils
+
+supplierView --> controller : orderId
+deactivate supplierView
+
+controller -> model : getSupplierOrderDetails(orderId)
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> supplierOrderList : get(orderId)
+activate supplierOrderList
+supplierOrderList --> model : order
+deactivate supplierOrderList
+
+model -> model : verifyOrderOwnership(order, supplier)
+
+alt order exists and belongs to supplier
+    model --> controller : orderDetails
+    controller -> supplierView : showSupplierOrderDetails(orderDetails)
+else order not found or unauthorized
+    model --> controller : failure
+    controller -> supplierView : showError("Order not available")
+end
+
+deactivate model
+
+@enduml

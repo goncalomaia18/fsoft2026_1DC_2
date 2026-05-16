@@ -1,0 +1,59 @@
+@startuml
+title SD - Ver Detalhes de Produto Fornecido
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant ": Utils" as utils
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "productContainer:\nProductContainer" as productContainer
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (View Product Details)
+deactivate view
+
+controller -> supplierView : getProductData()
+activate supplierView
+
+supplierView -> utils : getNumber("product number")
+activate utils
+utils --> supplierView : productId
+deactivate utils
+
+supplierView --> controller : productId
+deactivate supplierView
+
+controller -> model : getSuppliedProductDetails(productId)
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> productContainer : get(productId)
+activate productContainer
+productContainer --> model : product
+deactivate productContainer
+
+model -> model : verifyProductOwnership(product, supplier)
+
+alt product exists and belongs to supplier
+    model --> controller : productDetails
+    controller -> supplierView : showProductDetails(productDetails)
+else product not found or unauthorized
+    model --> controller : failure
+    controller -> supplierView : showError("Product not available")
+end
+
+deactivate model
+
+@enduml

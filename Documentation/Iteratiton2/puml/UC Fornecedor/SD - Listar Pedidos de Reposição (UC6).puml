@@ -1,0 +1,45 @@
+@startuml
+title SD - Listar Pedidos de Reposição
+
+participant "controller:\nController" as controller
+participant "view: View" as view
+participant "supplierView: SupplierView" as supplierView
+participant "model: Pesca Tudo" as model
+participant "sessionManager:\nSessionManager" as sessionManager
+participant "supplierContainer:\nSupplierContainer" as supplierContainer
+participant "supplierOrderList:\nSupplierOrderList" as supplierOrderList
+
+controller -> view : menuManageSuppliers()
+activate view
+view --> controller : option (List Restock Orders)
+deactivate view
+
+controller -> model : getSupplierOrders()
+activate model
+
+model -> sessionManager : validateSupplierAccess()
+activate sessionManager
+sessionManager --> model : supplierId
+deactivate sessionManager
+
+model -> supplierContainer : get(supplierId)
+activate supplierContainer
+supplierContainer --> model : supplier
+deactivate supplierContainer
+
+model -> supplierOrderList : getBySupplier(supplier)
+activate supplierOrderList
+supplierOrderList --> model : orderList
+deactivate supplierOrderList
+
+alt orderList not empty
+    model --> controller : orderList
+    controller -> supplierView : showSupplierOrders(orderList)
+else orderList empty
+    model --> controller : failure
+    controller -> supplierView : showError("No restock orders")
+end
+
+deactivate model
+
+@enduml
