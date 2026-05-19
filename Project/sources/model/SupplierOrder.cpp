@@ -21,12 +21,16 @@ Supplier SupplierOrder::getSupplier() const {
     return supplier;
 }
 
-std::vector<Product> SupplierOrder::getProducts() const {
+ProductContainer& SupplierOrder::getProducts() {
+    return products;
+}
+
+const ProductContainer& SupplierOrder::getProducts() const {
     return products;
 }
 
 void SupplierOrder::addProduct(const Product& product) {
-    products.push_back(product);
+    products.addProduct(product);
 }
 
 void SupplierOrder::markCompleted() {

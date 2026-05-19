@@ -8,13 +8,15 @@
 #include <vector>
 #include "Supplier.h"
 #include "Product.h"
+#include "ProductContainer.h"
 
 class SupplierOrder {
 private:
     int orderNumber;
     std::string date;
     Supplier supplier;
-    std::vector<Product> products;
+
+    ProductContainer products;
 
 public:
     SupplierOrder();
@@ -23,7 +25,8 @@ public:
     int getOrderNumber() const;
     std::string getDate() const;
     Supplier getSupplier() const;
-    std::vector<Product> getProducts() const;
+    ProductContainer& getProducts();
+    const ProductContainer& getProducts() const;
     bool isCompleted = false;
     void markCompleted();
     bool getStatus() const;

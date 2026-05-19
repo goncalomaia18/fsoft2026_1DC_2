@@ -87,3 +87,28 @@ void ProductContainer::removeProduct(int id) {
 
     count--; // Reduz o tamanho do nosso array lógico
 }
+
+// 1. O Construtor de Cópia (cria um array novo e copia os dados um a um)
+ProductContainer::ProductContainer(const ProductContainer& other) {
+    capacity = other.capacity;
+    count = other.count;
+    productsArray = new Product[capacity];
+    for(int i = 0; i < count; i++) {
+        productsArray[i] = other.productsArray[i];
+    }
+}
+
+// 2. O Operador de Atribuição (apaga o array antigo, cria um novo e copia os dados)
+ProductContainer& ProductContainer::operator=(const ProductContainer& other) {
+    if (this != &other) { // Evita copiar para ele próprio (ex: a = a)
+        delete[] productsArray; // Apaga o lixo antigo
+
+        capacity = other.capacity;
+        count = other.count;
+        productsArray = new Product[capacity];
+        for(int i = 0; i < count; i++) {
+            productsArray[i] = other.productsArray[i];
+        }
+    }
+    return *this;
+}

@@ -20,6 +20,9 @@ public:
     ProductContainer();
     ~ProductContainer();
 
+    ProductContainer(const ProductContainer& other);
+    ProductContainer& operator=(const ProductContainer& other);
+
     void addProduct(const Product& product);
     Product& findById(int id);
 
