@@ -5,6 +5,8 @@
 #ifndef FSOFT2026_1DC__PESCATUDO_H
 #define FSOFT2026_1DC__PESCATUDO_H
 #include <vector>
+
+#include "ProductContainer.h"
 #include "Product.h"
 #include "Client.h"
 #include "Manager.h"
@@ -14,7 +16,7 @@
 
 class PescaTudo {
 private:
-    std::vector<Product> products;
+    ProductContainer products;
     std::vector<Client> clients;
     std::vector<Supplier> suppliers;
     std::vector<ClientOrder> clientOrders;
@@ -24,7 +26,7 @@ private:
 public:
     PescaTudo();
 
-    std::vector<Product>& getProducts();
+    ProductContainer& getProducts();
     std::vector<Client>& getClients();
     std::vector<Supplier>& getSuppliers();
     std::vector<ClientOrder>& getClientOrders();

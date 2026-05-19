@@ -19,6 +19,7 @@ add_executable(fsoft2026_1DC_
         Project/sources/model/Supplier.cpp
         Project/sources/model/SupplierOrder.cpp
 
+
         Project/sources/views/View.cpp
 
         Project/sources/Views/Utils.cpp
@@ -26,6 +27,7 @@ add_executable(fsoft2026_1DC_
         Project/sources/exceptions/InvalidLoginException.cpp
         Project/sources/exceptions/OrderNotFoundException.cpp
         Project/sources/exceptions/ProductNotFoundException.cpp
+        Project/sources/model/ProductContainer.cpp
 )
 
 target_include_directories(fsoft2026_1DC_ PRIVATE
