@@ -120,6 +120,7 @@ void Controller::viewProductsGuest() {
         }
     } while (option != 0);
 }
+
 void Controller::loginClient() {
     std::string email, password;
     bool found = false;
@@ -129,10 +130,12 @@ void Controller::loginClient() {
     std::cout << "Password: ";
     std::cin >> password;
 
-    for (Client& c : store.getClients()) {
+    ClientContainer& clients = store.getClients();
+    for (int i = 0; i < clients.getSize(); i++) {
+        Client& c = clients.getClient(i);
         if (c.getEmail() == email && c.getPassword() == password) {
             std::cout << "Login successful! Welcome back, " << email << ".\n";
-            loggedInClient = &c;  // <- guardar o cliente autenticado
+            loggedInClient = &c;
             found = true;
             runClientLoggedMenu();
             break;
@@ -142,6 +145,7 @@ void Controller::loginClient() {
         throw InvalidLoginException();
     }
 }
+
 void Controller::runClientLoggedMenu() {
     if (!isAuthenticated()) {
         std::cout << "Access denied. Please login first.\n";
@@ -183,28 +187,32 @@ void Controller::signUpClient() {
     std::cout << "\n--- Sign Up ---\n";
     std::cout << "Email: ";
     std::cin >> email;
-    // Verificar formato do email
+
     if (!Utils::isValidEmail(email)) {
         std::cout << "Invalid email format. Use something like: XXXXXX@gmail.com\n";
         return;
     }
-    // Verificar se já existe
-    for (const Client& c : store.getClients()) {
+
+    ClientContainer& clients = store.getClients();
+    for (int i = 0; i < clients.getSize(); i++) {
+        const Client& c = clients.getClient(i);
         if (c.getEmail() == email) {
             std::cout << "An account with that email already exists.\n";
             return;
         }
     }
+
     std::cout << "Password: ";
     std::cin >> password;
-    // Verificar tamanho mínimo da password
+
     if (password.length() < 4) {
         std::cout << "Password must have at least 4 characters.\n";
         return;
     }
+
     Client newClient(email, password);
-    store.getClients().push_back(newClient);
-    // Guardar cliente no ficheiro
+    clients.addClient(newClient); // Aqui usava push_back
+
     std::ofstream outFile("clients.txt", std::ios::app);
     if (outFile.is_open()) {
         outFile << email << " " << password << "\n";
@@ -214,6 +222,7 @@ void Controller::signUpClient() {
     }
     std::cout << "Account created successfully!\n";
 }
+
 void Controller::addToCart(Cart& cart) {
     int productId;
     int quantity;
@@ -659,18 +668,18 @@ void Controller::placeOrderToSupplier() {
     const auto& suppliers = store.getSuppliers();
     ProductContainer& products = store.getProducts();
 
-    if (suppliers.empty() || products.getSize() == 0) {
+    if (suppliers.getSize() == 0 || products.getSize() == 0) {
         std::cout << "No suppliers or products available.\n";
         return;
     }
     std::cout << "\n--- Suppliers and Their Products ---\n";
-    for (const Supplier& s : suppliers) {
+    for (int i = 0; i < suppliers.getSize(); i++) {
+        const Supplier& s = suppliers.getSupplier(i);
         std::cout << "\nSupplier ID: " << s.getId()
                   << " | Name: " << s.getName() << "\n";
 
-        // NOVO CICLO FOR AQUI
-        for (int i = 0; i < products.getSize(); i++) {
-            const Product& p = products.getProduct(i);
+        for (int j = 0; j < products.getSize(); j++) {
+            const Product& p = products.getProduct(j);
             if (p.getSupplier().getId() == s.getId()) {
                 std::cout << "   - Product ID: " << p.getId()
                           << " | Name: " << p.getName()
@@ -712,31 +721,37 @@ void Controller::deleteClientByEmail() {
     std::string email;
     std::cout << "Enter the email of the client to delete: ";
     std::cin >> email;
-    std::vector<Client>& clients = store.getClients();
 
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
-        if (it->getEmail() == email) {
-            const auto& orders = it->getOrders();
-            for (const auto& order : orders) {
-                if (!order.isDelivered()) {
-                    std::cout << "Cannot delete client: He/Her have pending orders.\n";
-                    return;
-                }
+    ClientContainer& clients = store.getClients();
+
+    try {
+        // Encontrar o cliente para validar encomendas
+        Client& c = clients.findByEmail(email);
+
+        const auto& orders = c.getOrders();
+        for (const auto& order : orders) {
+            if (!order.isDelivered()) {
+                std::cout << "Cannot delete client: He/Her have pending orders.\n";
+                return;
             }
-            std::cout << "Are you sure you want to delete this client? (y/n): ";
-            char confirm;
-            std::cin >> confirm;
-            if (confirm == 'y' || confirm == 'Y') {
-                clients.erase(it);
-                std::cout << "Client deleted successfully.\n";
-            } else {
-                std::cout << "Deletion cancelled.\n";
-            }
-            return;
         }
+
+        std::cout << "Are you sure you want to delete this client? (y/n): ";
+        char confirm;
+        std::cin >> confirm;
+
+        if (confirm == 'y' || confirm == 'Y') {
+            clients.removeClient(email);
+            std::cout << "Client deleted successfully.\n";
+        } else {
+            std::cout << "Deletion cancelled.\n";
+        }
+
+    } catch (const std::exception& e) {
+        std::cout << "Client with email \"" << email << "\" not found.\n";
     }
-    std::cout << "Client with email \"" << email << "\" not found.\n";
 }
+
 void Controller::viewSupplierOrders() {
     auto& orders = store.getSupplierOrders();
     if (orders.empty()) {
@@ -811,63 +826,76 @@ void Controller::viewCompletedSupplierOrders() {
     if (!found)
         std::cout << "\nNo completed supplier orders found.\n";
 }
+
 void Controller::viewAllClientsOrders() {
-    const auto& clients = store.getClients();
-    if (clients.empty()) {
+    const ClientContainer& clients = store.getClients();
+
+    if (clients.getSize() == 0) { // Aqui usava empty()
         std::cout << "No registered clients.\n";
         return;
     }
-    for (const Client& c : clients) {
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        const Client& c = clients.getClient(i);
         std::cout << "\n=============================\n";
         std::cout << "Client: " << c.getEmail() << "\n";
 
-        const auto& orders = c.getOrders();
+        const auto& orders = c.getOrders(); // Cuidado, the orders array inside a client might still be a vector.
         if (orders.empty()) {
             std::cout << "No orders.\n";
             continue;
         }
         int count = 1;
+        // As we are not touching ClientOrder Container YET, we keep the old loop for orders
         for (const ClientOrder& order : orders) {
             std::cout << "\n--- Order #" << count++ << " ---\n";
-            order.show();  // já imprime produtos, total e status
+            order.show();
         }
     }
     std::cout << "\n=============================\n";
 }
+
 void Controller::completeClientOrder() {
     std::string email;
     std::cout << "Enter the client email: ";
     std::cin >> email;
-    std::vector<Client>& clients = store.getClients();  // permite modificar
-    for (Client& client : clients) {
-        if (client.getEmail() == email) {
-            auto& orders = client.getOrders();
-            if (orders.empty()) {
-                std::cout << "This client has no orders.\n";
-                return;
-            }
-            std::cout << "\nOrders for " << email << ":\n";
-            for (size_t i = 0; i < orders.size(); ++i) {
-                std::cout << "\nOrder #" << (i + 1) << ":\n";
-                orders[i].show();
-            }
-            int choice;
-            std::cout << "\nEnter the order number to mark as delivered: ";
-            std::cin >> choice;
-            if (choice < 1 || static_cast<size_t>(choice) > orders.size()) {
-                throw OrderNotFoundException();
-            }
-            if (orders[choice - 1].isDelivered()) {
-                std::cout << "This order is already marked as delivered.\n";
-            } else {
-                orders[choice - 1].setDelivered(true);
-                std::cout << "Order marked as delivered.\n";
-            }
+
+    ClientContainer& clients = store.getClients();
+
+    try {
+        Client& client = clients.findByEmail(email);
+        auto& orders = client.getOrders();
+
+        if (orders.empty()) {
+            std::cout << "This client has no orders.\n";
             return;
         }
+
+        std::cout << "\nOrders for " << email << ":\n";
+        for (size_t i = 0; i < orders.size(); ++i) {
+            std::cout << "\nOrder #" << (i + 1) << ":\n";
+            orders[i].show();
+        }
+
+        int choice;
+        std::cout << "\nEnter the order number to mark as delivered: ";
+        std::cin >> choice;
+
+        if (choice < 1 || static_cast<size_t>(choice) > orders.size()) {
+            throw OrderNotFoundException();
+        }
+
+        if (orders[choice - 1].isDelivered()) {
+            std::cout << "This order is already marked as delivered.\n";
+        } else {
+            orders[choice - 1].setDelivered(true);
+            std::cout << "Order marked as delivered.\n";
+        }
+    } catch (const std::exception& e) {
+        std::cout << "Client not found.\n";
     }
-    std::cout << "Client not found.\n";
 }
+
 void Controller::addProductToClientCart(const std::string& email, const Product& product, int quantity) {
     clientCarts[email].addProduct(product, quantity);
 }

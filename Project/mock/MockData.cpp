@@ -14,9 +14,9 @@ void MockData::generateData(PescaTudo& store) {
     Supplier daiwa(2, "Daiwa", "987654321", "daiwa@supply.com");
     Supplier rapala(3, "Rapala", "222333444", "rapala@supply.com");
 
-    store.getSuppliers().push_back(shimano);
-    store.getSuppliers().push_back(daiwa);
-    store.getSuppliers().push_back(rapala);
+    store.getSuppliers().addSupplier(shimano);
+    store.getSuppliers().addSupplier(daiwa);
+    store.getSuppliers().addSupplier(rapala);
 
     // Adicionar produtos com suppliers associados
     store.getProducts().addProduct(Product(1, "Cana de Pesca Shimano", "Shimano", 12, "Canas",
@@ -51,16 +51,16 @@ void MockData::generateData(PescaTudo& store) {
                                           "Rede resistente para captura de peixe", 12.0f, 24.99f));
 
     // Adicionar clientes
-    store.getClients().push_back(Client("goncalo@gmail.com", "1234"));
-    store.getClients().push_back(Client("raul@gmail.com", "1234"));
-    store.getClients().push_back(Client("fernando@gmail.com", "1234"));
+    store.getClients().addClient(Client("goncalo@gmail.com", "1234"));
+    store.getClients().addClient(Client("raul@gmail.com", "1234"));
+    store.getClients().addClient(Client("fernando@gmail.com", "1234"));
 
     // Adicionar manager
     store.setManager(Manager("admin@pescatudo.com", "admin777"));
 
     // Encontrar referências aos clientes
-    Client& goncalo = store.getClients()[0];
-    Client& raul = store.getClients()[1];
+    Client& goncalo = store.getClients().getClient(0);
+    Client& raul = store.getClients().getClient(1);
 
     // Produtos para usar nas orders
     Product canaProd = store.findProductById(1);

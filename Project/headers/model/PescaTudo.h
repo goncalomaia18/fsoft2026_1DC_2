@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "ProductContainer.h"
+#include "ClientContainer.h"
+#include "SupplierContainer.h"
 #include "Product.h"
 #include "Client.h"
 #include "Manager.h"
@@ -17,8 +19,8 @@
 class PescaTudo {
 private:
     ProductContainer products;
-    std::vector<Client> clients;
-    std::vector<Supplier> suppliers;
+    ClientContainer clients;
+    SupplierContainer suppliers;
     std::vector<ClientOrder> clientOrders;
     std::vector<SupplierOrder> supplierOrders;
     Manager manager;
@@ -27,8 +29,8 @@ public:
     PescaTudo();
 
     ProductContainer& getProducts();
-    std::vector<Client>& getClients();
-    std::vector<Supplier>& getSuppliers();
+    ClientContainer& getClients();
+    SupplierContainer& getSuppliers();
     std::vector<ClientOrder>& getClientOrders();
     std::vector<SupplierOrder>& getSupplierOrders();
     Manager& getManager();
