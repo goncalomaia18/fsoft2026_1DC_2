@@ -10,11 +10,11 @@ ProductContainer& PescaTudo::getProducts() {
 }
 
 
-std::vector<Client>& PescaTudo::getClients() {
+ClientContainer& PescaTudo::getClients() {
     return clients;
 }
 
-std::vector<Supplier>& PescaTudo::getSuppliers() {
+SupplierContainer& PescaTudo::getSuppliers() {
     return suppliers;
 }
 
@@ -39,11 +39,7 @@ Product& PescaTudo::findProductById(int id) {
 }
 
 Supplier& PescaTudo::findSupplierById(int id) {
-    for (auto& s : suppliers) {
-        if (s.getId() == id)
-            return s;
-    }
-    throw std::runtime_error("Supplier not found.");
+    return suppliers.findById(id);
 }
 
 void PescaTudo::addProduct(const Product& product) {
@@ -51,7 +47,7 @@ void PescaTudo::addProduct(const Product& product) {
 }
 
 void PescaTudo::addSupplier(const Supplier& supplier) {
-    suppliers.push_back(supplier);
+    suppliers.addSupplier(supplier);
 }
 
 void PescaTudo::addSupplierOrder(const SupplierOrder& order) {

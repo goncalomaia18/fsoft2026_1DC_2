@@ -1,5 +1,10 @@
 #include "../headers/model/Client.h"
 
+Client::Client() {
+    // Não precisa de fazer nada, serve apenas para permitir
+    // a criação de arrays dinâmicos de Clientes.
+}
+
 Client::Client(const std::string& email, const std::string& password)
         : email(email), password(password) {}
 

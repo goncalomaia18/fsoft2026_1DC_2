@@ -28,6 +28,8 @@ add_executable(fsoft2026_1DC_
         Project/sources/exceptions/OrderNotFoundException.cpp
         Project/sources/exceptions/ProductNotFoundException.cpp
         Project/sources/model/ProductContainer.cpp
+        Project/sources/model/ClientContainer.cpp
+        Project/sources/model/SupplierContainer.cpp
 )
 
 target_include_directories(fsoft2026_1DC_ PRIVATE
