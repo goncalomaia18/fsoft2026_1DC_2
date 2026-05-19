@@ -17,6 +17,7 @@ private:
     std::vector<Product> products;
 
 public:
+    SupplierOrder();
     SupplierOrder(int number, const std::string& date, const Supplier& supplier);
 
     int getOrderNumber() const;

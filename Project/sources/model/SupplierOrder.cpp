@@ -1,7 +1,13 @@
-#include "../headers/model/SupplierOrder.h"
+#include "../../headers/model/SupplierOrder.h"
+
+SupplierOrder::SupplierOrder() {
+    this->orderNumber = 0;
+    this->date = "";
+    this->isCompleted = false;
+}
 
 SupplierOrder::SupplierOrder(int number, const std::string& date, const Supplier& supplier)
-        : orderNumber(number), date(date), supplier(supplier) {}
+        : orderNumber(number), date(date), supplier(supplier), isCompleted(false) {}
 
 int SupplierOrder::getOrderNumber() const {
     return orderNumber;
@@ -15,7 +21,6 @@ Supplier SupplierOrder::getSupplier() const {
     return supplier;
 }
 
-
 std::vector<Product> SupplierOrder::getProducts() const {
     return products;
 }
@@ -23,6 +28,7 @@ std::vector<Product> SupplierOrder::getProducts() const {
 void SupplierOrder::addProduct(const Product& product) {
     products.push_back(product);
 }
+
 void SupplierOrder::markCompleted() {
     isCompleted = true;
 }

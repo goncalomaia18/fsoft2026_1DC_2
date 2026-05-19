@@ -168,21 +168,21 @@ void MockData::generateData(PescaTudo& store) {
     order1.addProduct(canaProd);
     order1.addProduct(canaProd);
 
-    store.getSupplierOrders().push_back(order1);
+    store.getSupplierOrders().addOrder(order1);
 
     SupplierOrder order2(2, "2026-05-03", daiwa);
 
     order2.addProduct(carretoProd);
     order2.addProduct(carretoProd);
 
-    store.getSupplierOrders().push_back(order2);
+    store.getSupplierOrders().addOrder(order2);
 
     SupplierOrder order3(3, "2026-05-05", rapala);
 
     order3.addProduct(amostraProd);
     order3.addProduct(anzolProd);
 
-    store.getSupplierOrders().push_back(order3);
+    store.getSupplierOrders().addOrder(order3);
 
     // SupplierOrders completed
 
@@ -192,7 +192,7 @@ void MockData::generateData(PescaTudo& store) {
 
     completed1.markCompleted();
 
-    store.getSupplierOrders().push_back(completed1);
+    store.getSupplierOrders().addOrder(completed1);
 
     SupplierOrder completed2(5, "2026-05-12", daiwa);
 
@@ -201,7 +201,7 @@ void MockData::generateData(PescaTudo& store) {
 
     completed2.markCompleted();
 
-    store.getSupplierOrders().push_back(completed2);
+    store.getSupplierOrders().addOrder(completed2);
 
     SupplierOrder completed3(6, "2026-05-15", rapala);
 
@@ -210,5 +210,5 @@ void MockData::generateData(PescaTudo& store) {
 
     completed3.markCompleted();
 
-    store.getSupplierOrders().push_back(completed3);
+    store.getSupplierOrders().addOrder(completed3);
 }
