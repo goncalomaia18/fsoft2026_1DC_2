@@ -78,11 +78,12 @@ void Controller::viewProductsGuest() {
     }
     Cart& cart = *cartPtr;  // referência ao carrinho correto
     std::cout << "\n--- Available Products ---\n";
-    if (products.empty()) {
+    if (products.getSize() == 0) {
         std::cout << "No products available.\n";
         return;
     }
-    for (const Product& p : products) {
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& p = products.getProduct(i);
         std::cout << "ID: " << p.getId() << "\n";
         std::cout << "Name: " << p.getName() << "\n";
         std::cout << "Brand: " << p.getBrand() << "\n";
@@ -221,7 +222,9 @@ void Controller::addToCart(Cart& cart) {
     std::cout << "Enter quantity: ";
     std::cin >> quantity;
     // Encontrar o produto pelo ID
-    for (const Product& p : store.getProducts()) {
+    ProductContainer& prods = store.getProducts();
+    for (int i = 0; i < prods.getSize(); i++) {
+        Product& p = prods.getProduct(i);
         if (p.getId() == productId) {
             if (quantity > p.getStock()) {
                 std::cout << "Error: Only " << p.getStock() << " units in stock.\n";
@@ -516,11 +519,11 @@ void Controller::addProduct() {
     std::cin >> priceClient;
     int newId = 1;
     const auto& products = store.getProducts();
-    if (!products.empty()) {
-        newId = products.back().getId() + 1;
+    if (!products.getSize() == 0) {
+        newId = products.getProduct(products.getSize() - 1).getId() + 1;
     }
     Product newProduct(newId, name, brand, stock, category, description, priceSupplier, priceClient);
-    store.getProducts().push_back(newProduct);
+    store.getProducts().addProduct(newProduct);
     std::cout << "Product added successfully!\n";
     listProducts();
 }
@@ -529,9 +532,11 @@ void Controller::editProduct() {
     std::cout << "\n--- Edit Product ---\n";
     std::cout << "Enter product ID to edit: ";
     std::cin >> id;
-    // Procurar produto por ID
-    std::vector<Product>& products = store.getProducts(); // obter referÃªncia
-    for (Product& p : products) {
+
+    ProductContainer& products = store.getProducts();
+    // NOVO CICLO FOR
+    for (int i = 0; i < products.getSize(); i++) {
+        Product& p = products.getProduct(i);
         if (p.getId() == id) {
             std::cin.ignore();
             std::cout << "Current name: " << p.getName() << "\n";
@@ -580,44 +585,52 @@ void Controller::editProduct() {
         }
     }
     throw ProductNotFoundException();
-    listProducts();
 }
+
 void Controller::deleteProduct() {
     int id;
     std::cout << "\n--- Delete Product ---\n";
     std::cout << "Enter product ID to delete: ";
     std::cin >> id;
-    std::vector<Product>& products = store.getProducts();
-    auto it = std::find_if(products.begin(), products.end(), [id](const Product& p) {
-        return p.getId() == id;
-    });
-    if (it != products.end()) {
-        std::cout << "Product found: " << it->getName() << " by " << it->getBrand() << "\n";
+
+    ProductContainer& products = store.getProducts();
+
+    try {
+        Product& p = store.findProductById(id);
+        std::cout << "Product found: " << p.getName() << " by " << p.getBrand() << "\n";
         std::cout << "Are you sure you want to delete it? (y/n): ";
         char confirm;
         std::cin >> confirm;
 
         if (confirm == 'y' || confirm == 'Y') {
-            products.erase(it);
+            products.removeProduct(id);
             std::cout << "Product deleted successfully.\n";
         } else {
             std::cout << "Deletion cancelled.\n";
         }
-    } else {
+    } catch (const std::exception& e) {
         throw ProductNotFoundException();
     }
     listProducts();
 }
+
 void Controller::listProducts() {
     const auto& products = store.getProducts();
     const auto& supplierOrders = store.getSupplierOrders();
     std::cout << "\n--- Available Products ---\n";
-    if (products.empty()) {
+
+    if (products.getSize() == 0) {
         std::cout << "No products available.\n";
         return;
     }
-    for (const Product& p : products) {
+
+    // NOVO CICLO FOR
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& p = products.getProduct(i);
         int pending = 0;
+
+        // Cuidado: supplierOrders AINDA é um std::vector de momento, por isso este ciclo for com ':' funciona aqui para já.
+        // Quando mudares o supplierOrders para a tua própria classe Container, terás de mudar este for também!
         for (const SupplierOrder& order : supplierOrders) {
             if (!order.getStatus()) {
                 for (const Product& op : order.getProducts()) {
@@ -641,10 +654,12 @@ void Controller::listProducts() {
         std::cout << "\n--------------------------\n";
     }
 }
+
 void Controller::placeOrderToSupplier() {
     const auto& suppliers = store.getSuppliers();
-    const auto& products = store.getProducts();
-    if (suppliers.empty() || products.empty()) {
+    ProductContainer& products = store.getProducts();
+
+    if (suppliers.empty() || products.getSize() == 0) {
         std::cout << "No suppliers or products available.\n";
         return;
     }
@@ -652,7 +667,10 @@ void Controller::placeOrderToSupplier() {
     for (const Supplier& s : suppliers) {
         std::cout << "\nSupplier ID: " << s.getId()
                   << " | Name: " << s.getName() << "\n";
-        for (const Product& p : products) {
+
+        // NOVO CICLO FOR AQUI
+        for (int i = 0; i < products.getSize(); i++) {
+            const Product& p = products.getProduct(i);
             if (p.getSupplier().getId() == s.getId()) {
                 std::cout << "   - Product ID: " << p.getId()
                           << " | Name: " << p.getName()
@@ -660,16 +678,21 @@ void Controller::placeOrderToSupplier() {
             }
         }
     }
+
     int productId, quantity;
     std::cout << "\nEnter Product ID to order: ";
     std::cin >> productId;
     Product* chosenProduct = nullptr;
-    for (Product& p : store.getProducts()) {
+
+    // NOVO CICLO FOR AQUI TAMBÉM
+    for (int i = 0; i < products.getSize(); i++) {
+        Product& p = products.getProduct(i);
         if (p.getId() == productId) {
             chosenProduct = &p;
             break;
         }
     }
+
     if (!chosenProduct) {
         std::cout << "Invalid Product ID.\n";
         return;
@@ -683,6 +706,7 @@ void Controller::placeOrderToSupplier() {
     store.getSupplierOrders().push_back(order);
     std::cout << "Order placed to supplier " << chosenProduct->getSupplier().getName() << "!\n";
 }
+
 // Função eliminar um cliente por email
 void Controller::deleteClientByEmail() {
     std::string email;

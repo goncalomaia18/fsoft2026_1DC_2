@@ -19,35 +19,35 @@ void MockData::generateData(PescaTudo& store) {
     store.getSuppliers().push_back(rapala);
 
     // Adicionar produtos com suppliers associados
-    store.getProducts().push_back(Product(1, "Cana de Pesca Shimano", "Shimano", 12, "Canas",
+    store.getProducts().addProduct(Product(1, "Cana de Pesca Shimano", "Shimano", 12, "Canas",
                                           "Cana resistente para pesca em água doce", 25.0f, 49.99f, shimano));
 
-    store.getProducts().push_back(Product(2, "Carreto Daiwa Ninja", "Daiwa", 8, "Carretos",
+    store.getProducts().addProduct(Product(2, "Carreto Daiwa Ninja", "Daiwa", 8, "Carretos",
                                           "Carreto leve e preciso para pesca desportiva", 45.0f, 89.90f, daiwa));
 
-    store.getProducts().push_back(Product(3, "Amostra Artificial Rapala", "Rapala", 15, "Amostras",
+    store.getProducts().addProduct(Product(3, "Amostra Artificial Rapala", "Rapala", 15, "Amostras",
                                           "Amostra artificial para pesca de predadores", 7.0f, 14.99f, rapala));
 
     // Produtos sem supplier real
-    store.getProducts().push_back(Product(4, "Anzol Tamanho 6", "Mustad", 30, "Anzóis",
+    store.getProducts().addProduct(Product(4, "Anzol Tamanho 6", "Mustad", 30, "Anzóis",
                                           "Conjunto de anzóis resistentes", 1.5f, 3.99f));
 
-    store.getProducts().push_back(Product(5, "Isco Fresco Sardinha", "PescaMar", 20, "Iscos",
+    store.getProducts().addProduct(Product(5, "Isco Fresco Sardinha", "PescaMar", 20, "Iscos",
                                           "Isco fresco ideal para pesca marítima", 2.0f, 5.50f));
 
-    store.getProducts().push_back(Product(6, "Linha de Pesca 0.30mm", "Berkley", 18, "Linhas",
+    store.getProducts().addProduct(Product(6, "Linha de Pesca 0.30mm", "Berkley", 18, "Linhas",
                                           "Linha resistente para pesca em rio e mar", 4.0f, 9.99f));
 
-    store.getProducts().push_back(Product(7, "Boia de Pesca Grande", "Cormoran", 10, "Boias",
+    store.getProducts().addProduct(Product(7, "Boia de Pesca Grande", "Cormoran", 10, "Boias",
                                           "Boia resistente para pesca de superfície", 1.0f, 2.99f));
 
-    store.getProducts().push_back(Product(8, "Chumbadas 50g", "FishingPro", 25, "Chumbadas",
+    store.getProducts().addProduct(Product(8, "Chumbadas 50g", "FishingPro", 25, "Chumbadas",
                                           "Conjunto de chumbadas para pesca de fundo", 2.5f, 6.99f));
 
-    store.getProducts().push_back(Product(9, "Caixa de Pesca", "Plano", 7, "Acessórios",
+    store.getProducts().addProduct(Product(9, "Caixa de Pesca", "Plano", 7, "Acessórios",
                                           "Caixa organizadora para material de pesca", 15.0f, 29.99f));
 
-    store.getProducts().push_back(Product(10, "Rede de Pesca", "SeaNet", 5, "Redes",
+    store.getProducts().addProduct(Product(10, "Rede de Pesca", "SeaNet", 5, "Redes",
                                           "Rede resistente para captura de peixe", 12.0f, 24.99f));
 
     // Adicionar clientes
