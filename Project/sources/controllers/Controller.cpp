@@ -643,7 +643,9 @@ void Controller::listProducts() {
         for (int j = 0; j < supplierOrders.getSize(); j++) {
             const SupplierOrder& order = supplierOrders.getOrder(j);
             if (!order.getStatus()) {
-                for (const Product& op : order.getProducts()) {
+                const ProductContainer& orderProducts = order.getProducts();
+                for (int k = 0; k < orderProducts.getSize(); k++) {
+                    const Product& op = orderProducts.getProduct(k);
                     if (op.getId() == p.getId()) {
                         pending++;
                     }
@@ -769,8 +771,9 @@ void Controller::viewSupplierOrders() {
             if (!currentOrder.getStatus()) {
                 std::cout << idx << ". Order #" << currentOrder.getOrderNumber()
                           << " | Supplier: " << currentOrder.getSupplier().getName() << "\n";
-                for (const Product& p : currentOrder.getProducts()) {
-                    std::cout << "    - " << p.getName() << "\n";
+                const ProductContainer& currentProducts = currentOrder.getProducts();
+                for (int k = 0; k < currentProducts.getSize(); k++) {
+                    std::cout << "    - " << currentProducts.getProduct(k).getName() << "\n";
                 }
                 pendingIndexes.push_back(i);
                 ++idx;
@@ -791,8 +794,9 @@ void Controller::viewSupplierOrders() {
         int orderIdx = pendingIndexes[choice - 1];
         SupplierOrder& order = orders.getOrder(orderIdx); // Usar getOrder em vez de []
         std::cout << "\nOrder #" << order.getOrderNumber() << " | Supplier: " << order.getSupplier().getName() << "\n";
-        for (const Product& p : order.getProducts()) {
-            std::cout << "    - " << p.getName() << "\n";
+        const ProductContainer& orderProds = order.getProducts();
+        for (int k = 0; k < orderProds.getSize(); k++) {
+            std::cout << "    - " << orderProds.getProduct(k).getName() << "\n";
         }
         std::cout << "1. Mark as completed\n";
         std::cout << "2. Cancel order\n";
@@ -824,8 +828,9 @@ void Controller::viewCompletedSupplierOrders() {
             found = true;
             std::cout << "Order #" << order.getOrderNumber()
                       << " | Supplier: " << order.getSupplier().getName() << "\n";
-            for (const Product& p : order.getProducts()) {
-                std::cout << "  - " << p.getName() << "\n";
+            const ProductContainer& completedProds = order.getProducts();
+            for (int k = 0; k < completedProds.getSize(); k++) {
+                std::cout << "  - " << completedProds.getProduct(k).getName() << "\n";
             }
         }
     }
