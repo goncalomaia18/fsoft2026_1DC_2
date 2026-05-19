@@ -9,6 +9,7 @@
 #include "ProductContainer.h"
 #include "ClientContainer.h"
 #include "SupplierContainer.h"
+#include "SupplierOrderContainer.h"
 #include "Product.h"
 #include "Client.h"
 #include "Manager.h"
@@ -22,7 +23,7 @@ private:
     ClientContainer clients;
     SupplierContainer suppliers;
     std::vector<ClientOrder> clientOrders;
-    std::vector<SupplierOrder> supplierOrders;
+    SupplierOrderContainer supplierOrders;
     Manager manager;
 
 public:
@@ -32,7 +33,7 @@ public:
     ClientContainer& getClients();
     SupplierContainer& getSuppliers();
     std::vector<ClientOrder>& getClientOrders();
-    std::vector<SupplierOrder>& getSupplierOrders();
+    SupplierOrderContainer& getSupplierOrders();
     Manager& getManager();
     void setManager(const Manager& manager);
 

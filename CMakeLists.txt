@@ -30,6 +30,7 @@ add_executable(fsoft2026_1DC_
         Project/sources/model/ProductContainer.cpp
         Project/sources/model/ClientContainer.cpp
         Project/sources/model/SupplierContainer.cpp
+        Project/sources/model/SuppierOrderContainer.cpp
 )
 
 target_include_directories(fsoft2026_1DC_ PRIVATE

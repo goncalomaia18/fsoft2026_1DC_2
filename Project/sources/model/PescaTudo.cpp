@@ -22,7 +22,7 @@ std::vector<ClientOrder>& PescaTudo::getClientOrders() {
     return clientOrders;
 }
 
-std::vector<SupplierOrder>& PescaTudo::getSupplierOrders() {
+SupplierOrderContainer& PescaTudo::getSupplierOrders() {
     return supplierOrders;
 }
 
@@ -51,5 +51,5 @@ void PescaTudo::addSupplier(const Supplier& supplier) {
 }
 
 void PescaTudo::addSupplierOrder(const SupplierOrder& order) {
-    supplierOrders.push_back(order);
+    supplierOrders.addOrder(order);
 }

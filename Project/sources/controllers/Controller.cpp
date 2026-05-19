@@ -640,7 +640,8 @@ void Controller::listProducts() {
 
         // Cuidado: supplierOrders AINDA é um std::vector de momento, por isso este ciclo for com ':' funciona aqui para já.
         // Quando mudares o supplierOrders para a tua própria classe Container, terás de mudar este for também!
-        for (const SupplierOrder& order : supplierOrders) {
+        for (int j = 0; j < supplierOrders.getSize(); j++) {
+            const SupplierOrder& order = supplierOrders.getOrder(j);
             if (!order.getStatus()) {
                 for (const Product& op : order.getProducts()) {
                     if (op.getId() == p.getId()) {
@@ -708,11 +709,11 @@ void Controller::placeOrderToSupplier() {
     }
     std::cout << "Quantity to order: ";
     std::cin >> quantity;
-    int orderId = store.getSupplierOrders().size() + 1;
+    int orderId = store.getSupplierOrders().getSize() + 1;
     SupplierOrder order(orderId, "2024-01-01", chosenProduct->getSupplier());
     for (int i = 0; i < quantity; ++i)
         order.addProduct(*chosenProduct);
-    store.getSupplierOrders().push_back(order);
+    store.getSupplierOrders().addOrder(order);
     std::cout << "Order placed to supplier " << chosenProduct->getSupplier().getName() << "!\n";
 }
 
@@ -753,8 +754,9 @@ void Controller::deleteClientByEmail() {
 }
 
 void Controller::viewSupplierOrders() {
-    auto& orders = store.getSupplierOrders();
-    if (orders.empty()) {
+    SupplierOrderContainer& orders = store.getSupplierOrders();
+
+    if (orders.getSize() == 0) {
         std::cout << "\nNo supplier orders found.\n";
         return;
     }
@@ -762,11 +764,12 @@ void Controller::viewSupplierOrders() {
         std::vector<int> pendingIndexes;
         std::cout << "\n--- Pending Supplier Orders ---\n";
         int idx = 1;
-        for (size_t i = 0; i < orders.size(); ++i) {
-            if (!orders[i].getStatus()) {
-                std::cout << idx << ". Order #" << orders[i].getOrderNumber()
-                          << " | Supplier: " << orders[i].getSupplier().getName() << "\n";
-                for (const Product& p : orders[i].getProducts()) {
+        for (int i = 0; i < orders.getSize(); ++i) {
+            SupplierOrder& currentOrder = orders.getOrder(i); // Vai buscar a encomenda com o novo getter
+            if (!currentOrder.getStatus()) {
+                std::cout << idx << ". Order #" << currentOrder.getOrderNumber()
+                          << " | Supplier: " << currentOrder.getSupplier().getName() << "\n";
+                for (const Product& p : currentOrder.getProducts()) {
                     std::cout << "    - " << p.getName() << "\n";
                 }
                 pendingIndexes.push_back(i);
@@ -786,7 +789,7 @@ void Controller::viewSupplierOrders() {
             continue;
         }
         int orderIdx = pendingIndexes[choice - 1];
-        SupplierOrder& order = orders[orderIdx];
+        SupplierOrder& order = orders.getOrder(orderIdx); // Usar getOrder em vez de []
         std::cout << "\nOrder #" << order.getOrderNumber() << " | Supplier: " << order.getSupplier().getName() << "\n";
         for (const Product& p : order.getProducts()) {
             std::cout << "    - " << p.getName() << "\n";
@@ -801,7 +804,7 @@ void Controller::viewSupplierOrders() {
             order.markCompleted();
             std::cout << "Order marked as completed!\n";
         } else if (action == 2) {
-            orders.erase(orders.begin() + orderIdx);
+            orders.removeByIndex(orderIdx); // Usar o nosso método removeByIndex!
             std::cout << "Order cancelled!\n";
         } else if (action == 0) {
             continue;
@@ -810,10 +813,13 @@ void Controller::viewSupplierOrders() {
         }
     }
 }
+
 void Controller::viewCompletedSupplierOrders() {
-    const auto& orders = store.getSupplierOrders();
+    const SupplierOrderContainer& orders = store.getSupplierOrders();
     bool found = false;
-    for (const SupplierOrder& order : orders) {
+
+    for (int i = 0; i < orders.getSize(); i++) {
+        const SupplierOrder& order = orders.getOrder(i);
         if (order.getStatus()) {
             found = true;
             std::cout << "Order #" << order.getOrderNumber()
