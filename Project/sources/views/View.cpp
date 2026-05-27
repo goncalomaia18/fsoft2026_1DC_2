@@ -47,3 +47,30 @@ int View::askManagerMainOption() {
     std::cin >> option;
     return option;
 }
+
+void View::showSupplierMainMenu() {
+    std::cout << "\n--- Supplier Menu ---\n";
+    std::cout << "1. Login\n";
+    std::cout << "0. Exit\n";
+}
+
+int View::askSupplierMainOption() {
+    int option;
+    std::cout << "Select an option: ";
+    std::cin >> option;
+    return option;
+}
+
+void View::showSupplierLoggedMenu() {
+    std::cout << "\n--- Supplier Area ---\n";
+    std::cout << "1. View orders from manager\n";
+    std::cout << "2. Complete order\n";
+    std::cout << "0. Logout\n";
+}
+
+int View::askSupplierLoggedOption() {
+    int option;
+    std::cout << "Select an option: ";
+    std::cin >> option;
+    return option;
+}

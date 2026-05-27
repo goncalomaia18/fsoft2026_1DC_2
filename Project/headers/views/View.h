@@ -15,5 +15,11 @@ class View {
         static void showManagerMainMenu();
         static int askManagerMainOption();
 
+        static void showSupplierMainMenu();
+        static int askSupplierMainOption();
+
+        static void showSupplierLoggedMenu();
+        static int askSupplierLoggedOption();
+
 };
 #endif //FSOFT2026_1DC__VIEW_H
