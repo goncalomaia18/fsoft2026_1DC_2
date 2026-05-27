@@ -5,10 +5,15 @@
 #ifndef FSOFT2026_1DC__CONTROLLER_H
 #define FSOFT2026_1DC__CONTROLLER_H
 #include <map>
+#include <vector>
+
 #include "../model/PescaTudo.h"
 #include "../model/Cart.h"
 #include "../model/Client.h"
 #include "../model/Supplier.h"
+#include "../model/SupplierContainer.h"
+#include "../model/SupplierOrderContainer.h"
+#include "../model/ProductContainer.h"
 
 class Controller {
 private:
