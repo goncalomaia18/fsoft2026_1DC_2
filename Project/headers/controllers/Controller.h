@@ -9,9 +9,6 @@
 #include "../model/Cart.h"
 #include "../model/Client.h"
 #include "../model/Supplier.h"
-#include "../model/SupplierContainer.h"
-#include "../model/SupplierOrderContainer.h"
-#include "../model/ProductContainer.h"
 
 class Controller {
 private:
