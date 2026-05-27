@@ -3,16 +3,22 @@
 #ifndef FSOFT2026_1DC__CONTROLLER_H
 #define FSOFT2026_1DC__CONTROLLER_H
 #include <map>
+#include <vector>
+
 #include "../model/PescaTudo.h"
 #include "../model/Cart.h"
 #include "../model/Client.h"
+#include "../model/Supplier.h"
+#include "../model/SupplierContainer.h"
+#include "../model/SupplierOrderContainer.h"
+#include "../model/ProductContainer.h"
 
 class Controller {
 private:
     PescaTudo &store;
     Client* loggedInClient = nullptr;                // Cliente autenticado
     std::map<std::string, Cart> clientCarts;         // Email → Carrinho
-
+    const Supplier* loggedInSupplier = nullptr;
 public:
     Controller(PescaTudo &store);
     void run();
@@ -23,6 +29,14 @@ public:
     void runClientLoggedMenu();
     void loginManager();
     void runManagerMenu();  // (vai ser chamado após login)
+    // Área supplier
+    void runSupplier();
+    void loginSupplier();
+    void runSupplierMenu();
+    bool isSupplierAuthenticated();
+    void viewSupplierOwnPendingOrders();
+    void viewSupplierOwnCompletedOrders();
+    void completeSupplierOwnOrder();
 
     // Ações do cliente
     void loginClient();
