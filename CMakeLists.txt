@@ -22,7 +22,7 @@ add_executable(fsoft2026_1DC_
 
         Project/sources/views/View.cpp
 
-        Project/sources/Views/Utils.cpp
+        Project/sources/views/Utils.cpp
         Project/sources/exceptions/EmptyCartException.cpp
         Project/sources/exceptions/InvalidLoginException.cpp
         Project/sources/exceptions/OrderNotFoundException.cpp

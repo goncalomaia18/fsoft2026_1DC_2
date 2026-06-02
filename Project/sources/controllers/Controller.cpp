@@ -80,23 +80,30 @@ void Controller::runClient() {
     } while (option != 0);
 }
 void Controller::viewProductsGuest() {
-    const auto& products = store.getProducts();
+    const ProductContainer& products = store.getProducts();
     int option;
-    // Determinar qual carrinho usar
+
     Cart* cartPtr = nullptr;
+
     if (isAuthenticated()) {
         cartPtr = &clientCarts[loggedInClient->getEmail()];
     } else {
-        static Cart guestCart;  // carrinho temporário para clientes não logados
+        static Cart guestCart;
         cartPtr = &guestCart;
     }
-    Cart& cart = *cartPtr;  // referência ao carrinho correto
+
+    Cart& cart = *cartPtr;
+
     std::cout << "\n--- Available Products ---\n";
-    if (products.empty()) {
+
+    if (products.getSize() == 0) {
         std::cout << "No products available.\n";
         return;
     }
-    for (const Product& p : products) {
+
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& p = products.getProduct(i);
+
         std::cout << "ID: " << p.getId() << "\n";
         std::cout << "Name: " << p.getName() << "\n";
         std::cout << "Brand: " << p.getBrand() << "\n";
@@ -107,6 +114,7 @@ void Controller::viewProductsGuest() {
         std::cout << "Stock: " << p.getStock() << "\n";
         std::cout << "--------------------------\n";
     }
+
     do {
         std::cout << "1. Add to cart\n";
         std::cout << "2. View cart\n";
@@ -122,35 +130,45 @@ void Controller::viewProductsGuest() {
                     std::cout << "Error: " << e.what() << std::endl;
                 }
                 break;
+
             case 2:
                 viewCart(cart);
                 break;
+
             case 0:
-                std::cout << "Returning to client menu  ...\n";
+                std::cout << "Returning to client menu...\n";
                 break;
+
             default:
                 std::cout << "Invalid option.\n";
         }
+
     } while (option != 0);
 }
 void Controller::loginClient() {
     std::string email, password;
     bool found = false;
+
     std::cout << "\n--- Client Login ---\n";
     std::cout << "Email: ";
     std::cin >> email;
     std::cout << "Password: ";
     std::cin >> password;
 
-    for (Client& c : store.getClients()) {
+    ClientContainer& clients = store.getClients();
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        Client& c = clients.getClient(i);
+
         if (c.getEmail() == email && c.getPassword() == password) {
             std::cout << "Login successful! Welcome back, " << email << ".\n";
-            loggedInClient = &c;  // <- guardar o cliente autenticado
+            loggedInClient = &c;
             found = true;
             runClientLoggedMenu();
             break;
         }
     }
+
     if (!found) {
         throw InvalidLoginException();
     }
@@ -193,59 +211,76 @@ void Controller::runClientLoggedMenu() {
 }
 void Controller::signUpClient() {
     std::string email, password;
+
     std::cout << "\n--- Sign Up ---\n";
     std::cout << "Email: ";
     std::cin >> email;
-    // Verificar formato do email
+
     if (!Utils::isValidEmail(email)) {
         std::cout << "Invalid email format. Use something like: XXXXXX@gmail.com\n";
         return;
     }
-    // Verificar se já existe
-    for (const Client& c : store.getClients()) {
+
+    ClientContainer& clients = store.getClients();
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        const Client& c = clients.getClient(i);
+
         if (c.getEmail() == email) {
             std::cout << "An account with that email already exists.\n";
             return;
         }
     }
+
     std::cout << "Password: ";
     std::cin >> password;
-    // Verificar tamanho mínimo da password
+
     if (password.length() < 4) {
         std::cout << "Password must have at least 4 characters.\n";
         return;
     }
+
     Client newClient(email, password);
-    store.getClients().push_back(newClient);
-    // Guardar cliente no ficheiro
+    clients.addClient(newClient);
+
     std::ofstream outFile("clients.txt", std::ios::app);
+
     if (outFile.is_open()) {
         outFile << email << " " << password << "\n";
         outFile.close();
     } else {
         std::cout << "Error saving client to file.\n";
     }
+
     std::cout << "Account created successfully!\n";
 }
 void Controller::addToCart(Cart& cart) {
     int productId;
     int quantity;
+
     std::cout << "Enter the product ID: ";
     std::cin >> productId;
+
     std::cout << "Enter quantity: ";
     std::cin >> quantity;
-    // Encontrar o produto pelo ID
-    for (const Product& p : store.getProducts()) {
+
+    const ProductContainer& products = store.getProducts();
+
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& p = products.getProduct(i);
+
         if (p.getId() == productId) {
             if (quantity > p.getStock()) {
                 std::cout << "Error: Only " << p.getStock() << " units in stock.\n";
                 return;
             }
+
             cart.addProduct(p, quantity);
             std::cout << "Product added to cart.\n";
             return;
         }
     }
+
     throw ProductNotFoundException();
 }
 void Controller::viewCart(Cart& cart) {
@@ -501,12 +536,14 @@ void Controller::manageClientsMenu() {
     } while (option != 0);
 }
 void Controller::addProduct() {
-    std::cin.ignore(); // Limpa o buffer de entrada
+    std::cin.ignore();
+
     std::string name, brand, category, description;
     int stock;
     float priceSupplier, priceClient;
 
     std::cout << "\n--- Add New Product ---\n";
+
     std::cout << "Name: ";
     std::getline(std::cin, name);
 
@@ -528,119 +565,168 @@ void Controller::addProduct() {
 
     std::cout << "Selling price (EUR): ";
     std::cin >> priceClient;
+
+    ProductContainer& products = store.getProducts();
+
     int newId = 1;
-    const auto& products = store.getProducts();
-    if (!products.empty()) {
-        newId = products.back().getId() + 1;
+
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& product = products.getProduct(i);
+
+        if (product.getId() >= newId) {
+            newId = product.getId() + 1;
+        }
     }
+
     Product newProduct(newId, name, brand, stock, category, description, priceSupplier, priceClient);
-    store.getProducts().push_back(newProduct);
+    products.addProduct(newProduct);
+
     std::cout << "Product added successfully!\n";
+
     listProducts();
 }
 void Controller::editProduct() {
     int id;
+
     std::cout << "\n--- Edit Product ---\n";
     std::cout << "Enter product ID to edit: ";
     std::cin >> id;
-    // Procurar produto por ID
-    std::vector<Product>& products = store.getProducts(); // obter referÃªncia
-    for (Product& p : products) {
+
+    ProductContainer& products = store.getProducts();
+
+    for (int i = 0; i < products.getSize(); i++) {
+        Product& p = products.getProduct(i);
+
         if (p.getId() == id) {
             std::cin.ignore();
+
             std::cout << "Current name: " << p.getName() << "\n";
             std::cout << "New name (leave empty to keep): ";
+
             std::string input;
             std::getline(std::cin, input);
 
             if (!input.empty()) p.setName(input);
+
             std::cout << "Current brand: " << p.getBrand() << "\n";
             std::cout << "New brand (leave empty to keep): ";
             std::getline(std::cin, input);
 
             if (!input.empty()) p.setBrand(input);
+
             std::cout << "Current stock: " << p.getStock() << "\n";
             std::cout << "New stock (-1 to keep): ";
+
             int stockInput;
             std::cin >> stockInput;
 
             if (stockInput >= 0) p.setStock(stockInput);
+
             std::cin.ignore();
+
             std::cout << "Current category: " << p.getCategory() << "\n";
             std::cout << "New category (leave empty to keep): ";
             std::getline(std::cin, input);
 
             if (!input.empty()) p.setCategory(input);
+
             std::cout << "Current description: " << p.getDescription() << "\n";
             std::cout << "New description (leave empty to keep): ";
             std::getline(std::cin, input);
 
             if (!input.empty()) p.setDescription(input);
+
             std::cout << "Current supplier price: " << p.getPriceSupplier() << "\n";
             std::cout << "New supplier price (-1 to keep): ";
+
             float newSupplierPrice;
             std::cin >> newSupplierPrice;
 
             if (newSupplierPrice >= 0) p.setPriceSupplier(newSupplierPrice);
+
             std::cout << "Current selling price: " << p.getPriceClient() << "\n";
             std::cout << "New selling price (-1 to keep): ";
+
             float newClientPrice;
             std::cin >> newClientPrice;
 
             if (newClientPrice >= 0) p.setPriceClient(newClientPrice);
+
             std::cout << "Product updated successfully.\n";
+
             listProducts();
             return;
         }
     }
+
     throw ProductNotFoundException();
-    listProducts();
 }
 void Controller::deleteProduct() {
     int id;
+
     std::cout << "\n--- Delete Product ---\n";
     std::cout << "Enter product ID to delete: ";
     std::cin >> id;
-    std::vector<Product>& products = store.getProducts();
-    auto it = std::find_if(products.begin(), products.end(), [id](const Product& p) {
-        return p.getId() == id;
-    });
-    if (it != products.end()) {
-        std::cout << "Product found: " << it->getName() << " by " << it->getBrand() << "\n";
-        std::cout << "Are you sure you want to delete it? (y/n): ";
-        char confirm;
-        std::cin >> confirm;
 
-        if (confirm == 'y' || confirm == 'Y') {
-            products.erase(it);
-            std::cout << "Product deleted successfully.\n";
-        } else {
-            std::cout << "Deletion cancelled.\n";
+    ProductContainer& products = store.getProducts();
+
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& product = products.getProduct(i);
+
+        if (product.getId() == id) {
+            std::cout << "Product found: " << product.getName()
+                      << " by " << product.getBrand() << "\n";
+
+            std::cout << "Are you sure you want to delete it? (y/n): ";
+
+            char confirm;
+            std::cin >> confirm;
+
+            if (confirm == 'y' || confirm == 'Y') {
+                products.removeProduct(id);
+                std::cout << "Product deleted successfully.\n";
+            } else {
+                std::cout << "Deletion cancelled.\n";
+            }
+
+            listProducts();
+            return;
         }
-    } else {
-        throw ProductNotFoundException();
     }
-    listProducts();
+
+    throw ProductNotFoundException();
 }
 void Controller::listProducts() {
-    const auto& products = store.getProducts();
-    const auto& supplierOrders = store.getSupplierOrders();
+    const ProductContainer& products = store.getProducts();
+    const SupplierOrderContainer& supplierOrders = store.getSupplierOrders();
+
     std::cout << "\n--- Available Products ---\n";
-    if (products.empty()) {
+
+    if (products.getSize() == 0) {
         std::cout << "No products available.\n";
         return;
     }
-    for (const Product& p : products) {
+
+    for (int i = 0; i < products.getSize(); i++) {
+        const Product& p = products.getProduct(i);
         int pending = 0;
-        for (const SupplierOrder& order : supplierOrders) {
+
+        for (int j = 0; j < supplierOrders.getSize(); j++) {
+            const SupplierOrder& order = supplierOrders.getOrder(j);
+
             if (!order.getStatus()) {
-                for (const Product& op : order.getProducts()) {
+                const ProductContainer& orderProducts = order.getProducts();
+
+                for (int k = 0; k < orderProducts.getSize(); k++) {
+                    const Product& op = orderProducts.getProduct(k);
+
                     if (op.getId() == p.getId()) {
                         pending++;
                     }
                 }
             }
         }
+
         std::cout << "ID: " << p.getId() << "\n";
         std::cout << "Name: " << p.getName() << "\n";
         std::cout << "Brand: " << p.getBrand() << "\n";
@@ -649,9 +735,11 @@ void Controller::listProducts() {
         std::cout << "Price: " << std::fixed << std::setprecision(2)
                   << p.getPriceClient() << " EUR\n";
         std::cout << "Stock: " << p.getStock();
+
         if (pending > 0) {
             std::cout << " (pending: " << pending << ")";
         }
+
         std::cout << "\n--------------------------\n";
     }
 }
@@ -743,31 +831,41 @@ void Controller::placeOrderToSupplier() {
 // Função eliminar um cliente por email
 void Controller::deleteClientByEmail() {
     std::string email;
+
     std::cout << "Enter the email of the client to delete: ";
     std::cin >> email;
-    std::vector<Client>& clients = store.getClients();
 
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
-        if (it->getEmail() == email) {
-            const auto& orders = it->getOrders();
+    ClientContainer& clients = store.getClients();
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        Client& client = clients.getClient(i);
+
+        if (client.getEmail() == email) {
+            const auto& orders = client.getOrders();
+
             for (const auto& order : orders) {
                 if (!order.isDelivered()) {
                     std::cout << "Cannot delete client: He/Her have pending orders.\n";
                     return;
                 }
             }
+
             std::cout << "Are you sure you want to delete this client? (y/n): ";
+
             char confirm;
             std::cin >> confirm;
+
             if (confirm == 'y' || confirm == 'Y') {
-                clients.erase(it);
+                clients.removeClient(email);
                 std::cout << "Client deleted successfully.\n";
             } else {
                 std::cout << "Deletion cancelled.\n";
             }
+
             return;
         }
     }
+
     std::cout << "Client with email \"" << email << "\" not found.\n";
 }
 void Controller::viewSupplierOrders() {
@@ -904,60 +1002,82 @@ void Controller::viewCompletedSupplierOrders() {
     }
 }
 void Controller::viewAllClientsOrders() {
-    const auto& clients = store.getClients();
-    if (clients.empty()) {
+    const ClientContainer& clients = store.getClients();
+
+    if (clients.getSize() == 0) {
         std::cout << "No registered clients.\n";
         return;
     }
-    for (const Client& c : clients) {
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        const Client& c = clients.getClient(i);
+
         std::cout << "\n=============================\n";
         std::cout << "Client: " << c.getEmail() << "\n";
 
         const auto& orders = c.getOrders();
+
         if (orders.empty()) {
             std::cout << "No orders.\n";
             continue;
         }
+
         int count = 1;
+
         for (const ClientOrder& order : orders) {
             std::cout << "\n--- Order #" << count++ << " ---\n";
-            order.show();  // já imprime produtos, total e status
+            order.show();
         }
     }
+
     std::cout << "\n=============================\n";
 }
 void Controller::completeClientOrder() {
     std::string email;
+
     std::cout << "Enter the client email: ";
     std::cin >> email;
-    std::vector<Client>& clients = store.getClients();  // permite modificar
-    for (Client& client : clients) {
+
+    ClientContainer& clients = store.getClients();
+
+    for (int i = 0; i < clients.getSize(); i++) {
+        Client& client = clients.getClient(i);
+
         if (client.getEmail() == email) {
             auto& orders = client.getOrders();
+
             if (orders.empty()) {
                 std::cout << "This client has no orders.\n";
                 return;
             }
+
             std::cout << "\nOrders for " << email << ":\n";
-            for (size_t i = 0; i < orders.size(); ++i) {
-                std::cout << "\nOrder #" << (i + 1) << ":\n";
-                orders[i].show();
+
+            for (size_t j = 0; j < orders.size(); j++) {
+                std::cout << "\nOrder #" << (j + 1) << ":\n";
+                orders[j].show();
             }
+
             int choice;
+
             std::cout << "\nEnter the order number to mark as delivered: ";
             std::cin >> choice;
+
             if (choice < 1 || static_cast<size_t>(choice) > orders.size()) {
                 throw OrderNotFoundException();
             }
+
             if (orders[choice - 1].isDelivered()) {
                 std::cout << "This order is already marked as delivered.\n";
             } else {
                 orders[choice - 1].setDelivered(true);
                 std::cout << "Order marked as delivered.\n";
             }
+
             return;
         }
     }
+
     std::cout << "Client not found.\n";
 }
 void Controller::addProductToClientCart(const std::string& email, const Product& product, int quantity) {

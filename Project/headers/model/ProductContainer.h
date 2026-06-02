@@ -32,6 +32,7 @@ public:
     int getSize() const;
     Product& getProduct(int index);
     const Product& getProduct(int index) const;
+    bool empty() const;
 };
 
 #endif
