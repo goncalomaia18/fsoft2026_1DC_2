@@ -1523,8 +1523,7 @@ void Controller::respondToSupplierRestockRequest() {
               << "New status: " << order->getStatusText() << "\n";
 }
 
-    std::cout << "Order completed successfully. Stock updated.\n";
-}
+
 
 void Controller::evaluateProduct() {
     if (!isAuthenticated()) {
