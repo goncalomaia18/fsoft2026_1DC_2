@@ -51,7 +51,7 @@ int View::askManagerMainOption() {
 void View::showSupplierMainMenu() {
     std::cout << "\n--- Supplier Menu ---\n";
     std::cout << "1. Login\n";
-    std::cout << "0. Exit\n";
+    std::cout << "0. Back\n";
 }
 
 int View::askSupplierMainOption() {
@@ -63,8 +63,12 @@ int View::askSupplierMainOption() {
 
 void View::showSupplierLoggedMenu() {
     std::cout << "\n--- Supplier Area ---\n";
-    std::cout << "1. View orders from manager\n";
-    std::cout << "2. Complete order\n";
+    std::cout << "1. View supplied products\n";
+    std::cout << "2. View product details\n";
+    std::cout << "3. Update product availability\n";
+    std::cout << "4. List restock requests\n";
+    std::cout << "5. View restock request details\n";
+    std::cout << "6. Respond to restock request\n";
     std::cout << "0. Logout\n";
 }
 

@@ -11,9 +11,9 @@
 void MockData::generateData(PescaTudo& store) {
 
     // Adicionar suppliers
-    Supplier shimano(1, "Shimano", "123456789", "shimano@supply.com");
-    Supplier daiwa(2, "Daiwa", "987654321", "daiwa@supply.com");
-    Supplier rapala(3, "Rapala", "222333444", "rapala@supply.com");
+    Supplier shimano(1, "Shimano", "123456789", "shimano@supply.com", "shimano123");
+    Supplier daiwa(2, "Daiwa", "987654321", "daiwa@supply.com", "daiwa123");
+    Supplier rapala(3, "Rapala", "222333444", "rapala@supply.com", "rapala123");
 
     store.getSuppliers().addSupplier(shimano);
     store.getSuppliers().addSupplier(daiwa);
@@ -217,7 +217,7 @@ void MockData::generateData(PescaTudo& store) {
     SupplierOrder order3(3, "2026-05-05", rapala);
 
     order3.addProduct(amostraProd);
-    order3.addProduct(anzolProd);
+    order3.addProduct(amostraProd);
 
     store.getSupplierOrders().addOrder(order3);
 
@@ -234,7 +234,7 @@ void MockData::generateData(PescaTudo& store) {
     SupplierOrder completed2(5, "2026-05-12", daiwa);
 
     completed2.addProduct(carretoProd);
-    completed2.addProduct(anzolProd);
+    completed2.addProduct(carretoProd);
 
     completed2.markCompleted();
 
@@ -243,7 +243,7 @@ void MockData::generateData(PescaTudo& store) {
     SupplierOrder completed3(6, "2026-05-15", rapala);
 
     completed3.addProduct(amostraProd);
-    completed3.addProduct(canaProd);
+    completed3.addProduct(amostraProd);
 
     completed3.markCompleted();
 
