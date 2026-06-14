@@ -1,4 +1,6 @@
 #include "../headers/model/ProductContainer.h"
+#include "exceptions/ProductNotFoundException.h"
+
 
 // Inicializamos o contentor com espaço para 5 produtos (podes mudar este valor)
 ProductContainer::ProductContainer() {
@@ -43,7 +45,7 @@ Product& ProductContainer::findById(int id) {
             return productsArray[i];
         }
     }
-    throw std::runtime_error("Product not found.");
+    throw ProductNotFoundException();
 }
 
 // Retorna quantos produtos existem (útil para os ciclos for)
@@ -111,4 +113,8 @@ ProductContainer& ProductContainer::operator=(const ProductContainer& other) {
         }
     }
     return *this;
+}
+
+bool ProductContainer::empty() const {
+    return count == 0;
 }
