@@ -24,6 +24,9 @@ set(PROJECT_SOURCES
         Project/sources/model/ClientContainer.cpp
         Project/sources/model/SupplierContainer.cpp
         Project/sources/model/SuppierOrderContainer.cpp
+        Project/headers/model/EvaluationContainer.h
+        Project/sources/model/EvaluationContainer.cpp
+        Project/sources/model/Evaluation.cpp
 )
 
 add_executable(fsoft2026_1DC_ main.cpp ${PROJECT_SOURCES})
