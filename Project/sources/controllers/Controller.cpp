@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <fstream>
+#include <map>
 #include <vector>
 #include <thread>
 #include <chrono>
@@ -20,6 +21,87 @@
 #include "../../headers/model/SupplierOrderContainer.h"
 #include "../../headers/model/ProductContainer.h"
 
+
+
+namespace {
+Product* findOwnedProduct(ProductContainer& products, int productId, int supplierId) {
+    for (int i = 0; i < products.getSize(); i++) {
+        Product& product = products.getProduct(i);
+
+        if (product.getId() == productId &&
+            product.getSupplier().getId() == supplierId) {
+            return &product;
+        }
+    }
+
+    return nullptr;
+}
+
+SupplierOrder* findOwnedSupplierOrder(SupplierOrderContainer& orders,
+                                      int orderNumber,
+                                      int supplierId) {
+    for (int i = 0; i < orders.getSize(); i++) {
+        SupplierOrder& order = orders.getOrder(i);
+
+        if (order.getOrderNumber() == orderNumber &&
+            order.getSupplier().getId() == supplierId) {
+            return &order;
+        }
+    }
+
+    return nullptr;
+}
+
+void showSupplierOrderDetails(const SupplierOrder& order) {
+    const ProductContainer& products = order.getProducts();
+    std::map<int, int> quantities;
+
+    for (int i = 0; i < products.getSize(); i++) {
+        quantities[products.getProduct(i).getId()]++;
+    }
+
+    std::cout << "\n--- Restock Request Details ---\n";
+    std::cout << "Order number: " << order.getOrderNumber() << "\n";
+    std::cout << "Date: " << order.getDate() << "\n";
+    std::cout << "Supplier: " << order.getSupplier().getName() << "\n";
+    std::cout << "Status: " << order.getStatusText() << "\n";
+
+    float total = 0.0f;
+
+    for (const auto& entry : quantities) {
+        const int productId = entry.first;
+        const int quantity = entry.second;
+        const Product* selectedProduct = nullptr;
+
+        for (int i = 0; i < products.getSize(); i++) {
+            const Product& product = products.getProduct(i);
+
+            if (product.getId() == productId) {
+                selectedProduct = &product;
+                break;
+            }
+        }
+
+        if (selectedProduct == nullptr) {
+            continue;
+        }
+
+        const float subtotal = selectedProduct->getPriceSupplier() * quantity;
+        total += subtotal;
+
+        std::cout << "Product ID: " << selectedProduct->getId() << "\n";
+        std::cout << "Name: " << selectedProduct->getName() << "\n";
+        std::cout << "Quantity: " << quantity << "\n";
+        std::cout << "Unit price: " << std::fixed << std::setprecision(2)
+                  << selectedProduct->getPriceSupplier() << " EUR\n";
+        std::cout << "Subtotal: " << subtotal << " EUR\n";
+        std::cout << "--------------------------\n";
+    }
+
+    std::cout << "Total: " << std::fixed << std::setprecision(2)
+              << total << " EUR\n";
+}
+}
 
 Controller::Controller(PescaTudo &store) : store(store) {}
 void Controller::run() {
@@ -714,7 +796,8 @@ void Controller::listProducts() {
         for (int j = 0; j < supplierOrders.getSize(); j++) {
             const SupplierOrder& order = supplierOrders.getOrder(j);
 
-            if (!order.getStatus()) {
+            if (!order.getStatus() &&
+                order.getOrderStatus() != SupplierOrderStatus::Rejected) {
                 const ProductContainer& orderProducts = order.getProducts();
 
                 for (int k = 0; k < orderProducts.getSize(); k++) {
@@ -879,7 +962,7 @@ void Controller::viewSupplierOrders() {
     while (true) {
         std::vector<int> pendingIndexes;
 
-        std::cout << "\n--- Pending Supplier Orders ---\n";
+        std::cout << "\n--- Open Supplier Orders ---\n";
 
         int visibleIndex = 1;
 
@@ -939,6 +1022,7 @@ void Controller::viewSupplierOrders() {
             std::cout << "    - " << product.getName() << "\n";
         }
 
+        std::cout << "Supplier response: " << order.getStatusText() << "\n";
         std::cout << "1. Mark as completed\n";
         std::cout << "2. Cancel order\n";
         std::cout << "0. Go back\n";
@@ -948,6 +1032,16 @@ void Controller::viewSupplierOrders() {
         std::cin >> action;
 
         if (action == 1) {
+            if (order.getOrderStatus() == SupplierOrderStatus::Pending) {
+                std::cout << "The supplier has not responded yet.\n";
+                continue;
+            }
+
+            if (order.getOrderStatus() == SupplierOrderStatus::Rejected) {
+                std::cout << "A rejected order cannot be completed.\n";
+                continue;
+            }
+
             for (int j = 0; j < products.getSize(); j++) {
                 const Product& orderedProduct = products.getProduct(j);
                 Product& product = store.findProductById(orderedProduct.getId());
@@ -986,6 +1080,7 @@ void Controller::viewCompletedSupplierOrders() {
             std::cout << "\nOrder #" << order.getOrderNumber()
                       << " | Supplier: "
                       << order.getSupplier().getName()
+                      << " | Response: " << order.getStatusText()
                       << "\n";
 
             const ProductContainer& products = order.getProducts();
@@ -1094,15 +1189,16 @@ void Controller::runSupplier() {
     int option;
 
     do {
-        std::cout << "\n--- Supplier Menu ---\n";
-        std::cout << "1. Login\n";
-        std::cout << "0. Back\n";
-        std::cout << "Option: ";
-        std::cin >> option;
+        View::showSupplierMainMenu();
+        option = View::askSupplierMainOption();
 
         switch (option) {
             case 1:
-                loginSupplier();
+                try {
+                    loginSupplier();
+                } catch (const InvalidLoginException& e) {
+                    std::cout << "Error: " << e.what() << "\n";
+                }
                 break;
 
             case 0:
@@ -1112,13 +1208,10 @@ void Controller::runSupplier() {
             default:
                 std::cout << "Invalid option.\n";
         }
-
     } while (option != 0);
 }
 
 void Controller::loginSupplier() {
-    std::string email;
-
     SupplierContainer& suppliers = store.getSuppliers();
 
     if (suppliers.getSize() == 0) {
@@ -1126,14 +1219,22 @@ void Controller::loginSupplier() {
         return;
     }
 
+    std::string identifier;
+    std::string password;
+
     std::cout << "\n--- Supplier Login ---\n";
-    std::cout << "Email: ";
-    std::cin >> email;
+    std::cout << "Email or supplier name: ";
+    std::getline(std::cin >> std::ws, identifier);
+    std::cout << "Password: ";
+    std::cin >> password;
 
     for (int i = 0; i < suppliers.getSize(); i++) {
         const Supplier& supplier = suppliers.getSupplier(i);
+        const bool identifierMatches =
+                supplier.getEmail() == identifier ||
+                supplier.getName() == identifier;
 
-        if (supplier.getEmail() == email) {
+        if (identifierMatches && supplier.getPassword() == password) {
             loggedInSupplier = &supplier;
 
             std::cout << "Login successful. Welcome, "
@@ -1144,7 +1245,7 @@ void Controller::loginSupplier() {
         }
     }
 
-    std::cout << "Supplier not found.\n";
+    throw InvalidLoginException();
 }
 
 void Controller::runSupplierMenu() {
@@ -1156,26 +1257,33 @@ void Controller::runSupplierMenu() {
     int option;
 
     do {
-        std::cout << "\n--- Supplier Area ---\n";
-        std::cout << "Supplier: " << loggedInSupplier->getName() << "\n";
-        std::cout << "1. View pending orders\n";
-        std::cout << "2. Complete order\n";
-        std::cout << "3. View completed orders\n";
-        std::cout << "0. Logout\n";
-        std::cout << "Option: ";
-        std::cin >> option;
+        std::cout << "\nSupplier: " << loggedInSupplier->getName() << "\n";
+        View::showSupplierLoggedMenu();
+        option = View::askSupplierLoggedOption();
 
         switch (option) {
             case 1:
-                viewSupplierOwnPendingOrders();
+                viewSupplierProducts();
                 break;
 
             case 2:
-                completeSupplierOwnOrder();
+                viewSupplierProductDetails();
                 break;
 
             case 3:
-                viewSupplierOwnCompletedOrders();
+                updateSupplierProductAvailability();
+                break;
+
+            case 4:
+                listSupplierRestockRequests();
+                break;
+
+            case 5:
+                viewSupplierRestockRequestDetails();
+                break;
+
+            case 6:
+                respondToSupplierRestockRequest();
                 break;
 
             case 0:
@@ -1186,153 +1294,220 @@ void Controller::runSupplierMenu() {
             default:
                 std::cout << "Invalid option.\n";
         }
-
     } while (option != 0);
 }
 
-void Controller::viewSupplierOwnPendingOrders() {
+void Controller::viewSupplierProducts() {
     if (!isSupplierAuthenticated()) {
         std::cout << "Access denied. Please login first.\n";
         return;
     }
 
-    const SupplierOrderContainer& orders = store.getSupplierOrders();
-
+    const ProductContainer& products = store.getProducts();
     bool found = false;
 
-    std::cout << "\n--- Pending Orders for "
-              << loggedInSupplier->getName()
-              << " ---\n";
-
-    for (int i = 0; i < orders.getSize(); i++) {
-        const SupplierOrder& order = orders.getOrder(i);
-
-        if (order.getSupplier().getId() == loggedInSupplier->getId()
-            && !order.getStatus()) {
-
-            found = true;
-
-            std::cout << "\nOrder #" << order.getOrderNumber() << "\n";
-
-            const ProductContainer& products = order.getProducts();
-
-            for (int j = 0; j < products.getSize(); j++) {
-                const Product& product = products.getProduct(j);
-
-                std::cout << "  - " << product.getName()
-                          << " | Brand: " << product.getBrand()
-                          << "\n";
-            }
-        }
-    }
-
-    if (!found) {
-        std::cout << "No pending orders found.\n";
-    }
-}
-
-void Controller::viewSupplierOwnCompletedOrders() {
-    if (!isSupplierAuthenticated()) {
-        std::cout << "Access denied. Please login first.\n";
-        return;
-    }
-
-    const SupplierOrderContainer& orders = store.getSupplierOrders();
-
-    bool found = false;
-
-    std::cout << "\n--- Completed Orders for "
-              << loggedInSupplier->getName()
-              << " ---\n";
-
-    for (int i = 0; i < orders.getSize(); i++) {
-        const SupplierOrder& order = orders.getOrder(i);
-
-        if (order.getSupplier().getId() == loggedInSupplier->getId()
-            && order.getStatus()) {
-
-            found = true;
-
-            std::cout << "\nOrder #" << order.getOrderNumber() << "\n";
-
-            const ProductContainer& products = order.getProducts();
-
-            for (int j = 0; j < products.getSize(); j++) {
-                const Product& product = products.getProduct(j);
-
-                std::cout << "  - " << product.getName()
-                          << " | Brand: " << product.getBrand()
-                          << "\n";
-            }
-        }
-    }
-
-    if (!found) {
-        std::cout << "No completed orders found.\n";
-    }
-}
-
-void Controller::completeSupplierOwnOrder() {
-    if (!isSupplierAuthenticated()) {
-        std::cout << "Access denied. Please login first.\n";
-        return;
-    }
-
-    SupplierOrderContainer& orders = store.getSupplierOrders();
-    std::vector<int> pendingIndexes;
-
-    std::cout << "\n--- Complete Supplier Order ---\n";
-
-    int visibleIndex = 1;
-
-    for (int i = 0; i < orders.getSize(); i++) {
-        SupplierOrder& order = orders.getOrder(i);
-
-        if (order.getSupplier().getId() == loggedInSupplier->getId()
-            && !order.getStatus()) {
-
-            std::cout << visibleIndex << ". Order #"
-                      << order.getOrderNumber()
-                      << "\n";
-
-            const ProductContainer& products = order.getProducts();
-
-            for (int j = 0; j < products.getSize(); j++) {
-                const Product& product = products.getProduct(j);
-                std::cout << "   - " << product.getName() << "\n";
-            }
-
-            pendingIndexes.push_back(i);
-            visibleIndex++;
-        }
-    }
-
-    if (pendingIndexes.empty()) {
-        std::cout << "No pending orders to complete.\n";
-        return;
-    }
-
-    int choice;
-
-    std::cout << "\nSelect order to complete: ";
-    std::cin >> choice;
-
-    if (choice < 1 || choice > static_cast<int>(pendingIndexes.size())) {
-        std::cout << "Invalid order option.\n";
-        return;
-    }
-
-    SupplierOrder& order = orders.getOrder(pendingIndexes[choice - 1]);
-    const ProductContainer& products = order.getProducts();
+    std::cout << "\n--- Products supplied by "
+              << loggedInSupplier->getName() << " ---\n";
 
     for (int i = 0; i < products.getSize(); i++) {
-        const Product& orderedProduct = products.getProduct(i);
+        const Product& product = products.getProduct(i);
 
-        Product& product = store.findProductById(orderedProduct.getId());
-        product.setStock(product.getStock() + 1);
+        if (product.getSupplier().getId() != loggedInSupplier->getId()) {
+            continue;
+        }
+
+        found = true;
+        std::cout << "ID: " << product.getId()
+                  << " | Name: " << product.getName()
+                  << " | Availability: " << product.getStock()
+                  << " | Supplier price: " << std::fixed << std::setprecision(2)
+                  << product.getPriceSupplier() << " EUR\n";
     }
 
-    order.markCompleted();
-
-    std::cout << "Order completed successfully. Stock updated.\n";
+    if (!found) {
+        std::cout << "No supplied products.\n";
+    }
 }
+
+void Controller::viewSupplierProductDetails() {
+    if (!isSupplierAuthenticated()) {
+        std::cout << "Access denied. Please login first.\n";
+        return;
+    }
+
+    int productId;
+    std::cout << "Enter product ID: ";
+    std::cin >> productId;
+
+    ProductContainer& products = store.getProducts();
+    Product* product = findOwnedProduct(
+            products,
+            productId,
+            loggedInSupplier->getId()
+    );
+
+    if (product == nullptr) {
+        std::cout << "Product not available or access denied.\n";
+        return;
+    }
+
+    std::cout << "\n--- Supplied Product Details ---\n";
+    std::cout << "ID: " << product->getId() << "\n";
+    std::cout << "Name: " << product->getName() << "\n";
+    std::cout << "Brand: " << product->getBrand() << "\n";
+    std::cout << "Category: " << product->getCategory() << "\n";
+    std::cout << "Description: " << product->getDescription() << "\n";
+    std::cout << "Availability: " << product->getStock() << "\n";
+    std::cout << "Supplier price: " << std::fixed << std::setprecision(2)
+              << product->getPriceSupplier() << " EUR\n";
+    std::cout << "Client price: " << product->getPriceClient() << " EUR\n";
+}
+
+void Controller::updateSupplierProductAvailability() {
+    if (!isSupplierAuthenticated()) {
+        std::cout << "Access denied. Please login first.\n";
+        return;
+    }
+
+    int productId;
+    std::cout << "Enter product ID: ";
+    std::cin >> productId;
+
+    ProductContainer& products = store.getProducts();
+    Product* product = findOwnedProduct(
+            products,
+            productId,
+            loggedInSupplier->getId()
+    );
+
+    if (product == nullptr) {
+        std::cout << "Product not available or access denied.\n";
+        return;
+    }
+
+    std::cout << "Current availability: " << product->getStock() << "\n";
+
+    int quantity;
+    std::cout << "New available quantity: ";
+    std::cin >> quantity;
+
+    if (quantity < 0) {
+        std::cout << "Invalid quantity.\n";
+        return;
+    }
+
+    product->setStock(quantity);
+    std::cout << "Product availability updated successfully.\n";
+}
+
+void Controller::listSupplierRestockRequests() {
+    if (!isSupplierAuthenticated()) {
+        std::cout << "Access denied. Please login first.\n";
+        return;
+    }
+
+    const SupplierOrderContainer& orders = store.getSupplierOrders();
+    bool found = false;
+
+    std::cout << "\n--- Restock Requests for "
+              << loggedInSupplier->getName() << " ---\n";
+
+    for (int i = 0; i < orders.getSize(); i++) {
+        const SupplierOrder& order = orders.getOrder(i);
+
+        if (order.getSupplier().getId() != loggedInSupplier->getId()) {
+            continue;
+        }
+
+        found = true;
+        std::cout << "Order #" << order.getOrderNumber()
+                  << " | Date: " << order.getDate()
+                  << " | Status: " << order.getStatusText()
+                  << "\n";
+    }
+
+    if (!found) {
+        std::cout << "No restock orders.\n";
+    }
+}
+
+void Controller::viewSupplierRestockRequestDetails() {
+    if (!isSupplierAuthenticated()) {
+        std::cout << "Access denied. Please login first.\n";
+        return;
+    }
+
+    int orderNumber;
+    std::cout << "Enter order number: ";
+    std::cin >> orderNumber;
+
+    SupplierOrderContainer& orders = store.getSupplierOrders();
+    SupplierOrder* order = findOwnedSupplierOrder(
+            orders,
+            orderNumber,
+            loggedInSupplier->getId()
+    );
+
+    if (order == nullptr) {
+        std::cout << "Order not available or access denied.\n";
+        return;
+    }
+
+    showSupplierOrderDetails(*order);
+}
+
+void Controller::respondToSupplierRestockRequest() {
+    if (!isSupplierAuthenticated()) {
+        std::cout << "Access denied. Please login first.\n";
+        return;
+    }
+
+    int orderNumber;
+    std::cout << "Enter order number: ";
+    std::cin >> orderNumber;
+
+    SupplierOrderContainer& orders = store.getSupplierOrders();
+    SupplierOrder* order = findOwnedSupplierOrder(
+            orders,
+            orderNumber,
+            loggedInSupplier->getId()
+    );
+
+    if (order == nullptr || !order->isPending()) {
+        std::cout << "Order cannot be answered. It may not exist, may belong "
+                     "to another supplier, or may already have a response.\n";
+        return;
+    }
+
+    showSupplierOrderDetails(*order);
+
+    std::cout << "\n1. Total confirmation\n";
+    std::cout << "2. Partial confirmation\n";
+    std::cout << "3. Reject\n";
+    std::cout << "Response: ";
+
+    int response;
+    std::cin >> response;
+
+    switch (response) {
+        case 1:
+            order->setOrderStatus(SupplierOrderStatus::Confirmed);
+            break;
+
+        case 2:
+            order->setOrderStatus(SupplierOrderStatus::PartiallyConfirmed);
+            break;
+
+        case 3:
+            order->setOrderStatus(SupplierOrderStatus::Rejected);
+            break;
+
+        default:
+            std::cout << "Invalid response.\n";
+            return;
+    }
+
+    std::cout << "Restock request response registered successfully. "
+              << "New status: " << order->getStatusText() << "\n";
+}
+

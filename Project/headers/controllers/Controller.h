@@ -1,5 +1,7 @@
 
 
+
+
 #ifndef FSOFT2026_1DC__CONTROLLER_H
 #define FSOFT2026_1DC__CONTROLLER_H
 #include <map>
@@ -31,9 +33,13 @@ public:
     void loginSupplier();
     void runSupplierMenu();
     bool isSupplierAuthenticated();
-    void viewSupplierOwnPendingOrders();
-    void viewSupplierOwnCompletedOrders();
-    void completeSupplierOwnOrder();
+
+    void viewSupplierProducts();
+    void viewSupplierProductDetails();
+    void updateSupplierProductAvailability();
+    void listSupplierRestockRequests();
+    void viewSupplierRestockRequestDetails();
+    void respondToSupplierRestockRequest();
 
     // Ações do cliente
     void loginClient();
@@ -71,3 +77,4 @@ public:
 
 };
 #endif //FSOFT2026_1DC__CONTROLLER_H
+

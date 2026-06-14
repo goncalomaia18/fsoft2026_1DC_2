@@ -4,19 +4,27 @@
 
 #ifndef FSOFT2026_1DC__SUPPLIERORDER_H
 #define FSOFT2026_1DC__SUPPLIERORDER_H
+
 #include <string>
-#include <vector>
 #include "Supplier.h"
 #include "Product.h"
 #include "ProductContainer.h"
+
+enum class SupplierOrderStatus {
+    Pending,
+    Confirmed,
+    PartiallyConfirmed,
+    Rejected
+};
 
 class SupplierOrder {
 private:
     int orderNumber;
     std::string date;
     Supplier supplier;
-
     ProductContainer products;
+    SupplierOrderStatus status;
+    bool completed;
 
 public:
     SupplierOrder();
@@ -25,13 +33,19 @@ public:
     int getOrderNumber() const;
     std::string getDate() const;
     Supplier getSupplier() const;
+
     ProductContainer& getProducts();
     const ProductContainer& getProducts() const;
-    bool isCompleted = false;
+    void addProduct(const Product& product);
+
+    SupplierOrderStatus getOrderStatus() const;
+    void setOrderStatus(SupplierOrderStatus newStatus);
+    std::string getStatusText() const;
+    bool isPending() const;
+
+
     void markCompleted();
     bool getStatus() const;
-
-    void addProduct(const Product& product);
 };
 
 #endif //FSOFT2026_1DC__SUPPLIERORDER_H
