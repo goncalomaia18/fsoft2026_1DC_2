@@ -4,6 +4,7 @@
 #include "../headers/model/Manager.h"
 #include "../headers/model/Supplier.h"
 #include "../headers/model/SupplierOrder.h"
+#include "../headers/model/Evaluation.h"
 
 #include <fstream>
 
@@ -50,6 +51,42 @@ void MockData::generateData(PescaTudo& store) {
     store.getProducts().addProduct(Product(10, "Rede de Pesca", "SeaNet", 5, "Redes",
                                           "Rede resistente para captura de peixe", 12.0f, 24.99f));
 
+    //Avaliações em produtos
+    store.addEvaluation(Evaluation(
+            store.getEvaluations().getNextId(),
+            1,
+            "pedro@gmail.com",
+            5,
+            "Produto muito bom, resistente e com boa qualidade."
+    ));
+
+    store.addEvaluation(Evaluation(
+            store.getEvaluations().getNextId(),
+            1,
+            "joao@gmail.com",
+            4,
+            "Gostei bastante do produto, corresponde ao esperado."
+    ));
+
+    store.addEvaluation(Evaluation(
+            store.getEvaluations().getNextId(),
+            2,
+            "pedro@gmail.com",
+            3,
+            "Produto razoavel, mas podia ter melhor acabamento."
+    ));
+
+    store.addEvaluation(Evaluation(
+            store.getEvaluations().getNextId(),
+            3,
+            "maria@gmail.com",
+            5,
+            "Excelente artigo para pesca, recomendo."
+    ));
+
+
+
+
     // Adicionar clientes
     store.getClients().addClient(Client("goncalo@gmail.com", "1234"));
     store.getClients().addClient(Client("raul@gmail.com", "1234"));
@@ -68,7 +105,7 @@ void MockData::generateData(PescaTudo& store) {
     Product amostraProd = store.findProductById(3);
     Product anzolProd = store.findProductById(4);
 
-    // Produtos no carrinho do Pedro
+    // Produtos no carrinho do gonçalo
     std::vector<std::pair<Product, int>> cartItems;
 
     cartItems.push_back(std::make_pair(canaProd, 1));
@@ -80,7 +117,7 @@ void MockData::generateData(PescaTudo& store) {
 
     goncalo.addOrder(cartOrder);
 
-    // Orders para Pedro
+
 
     // Order pendente
     std::vector<std::pair<Product, int>> goncaloPending1 = {
