@@ -55,6 +55,10 @@ public:
     //Encomendas
     void showClientOrders();
 
+    //Avaliações
+    void evaluateProduct();
+    void viewProductEvaluations();
+
     // Autenticação
     bool isAuthenticated();
 

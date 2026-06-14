@@ -10,12 +10,14 @@
 #include "ClientContainer.h"
 #include "SupplierContainer.h"
 #include "SupplierOrderContainer.h"
+#include "EvaluationContainer.h"
 #include "Product.h"
 #include "Client.h"
 #include "Manager.h"
 #include "Supplier.h"
 #include "ClientOrder.h"
 #include "SupplierOrder.h"
+
 
 class PescaTudo {
 private:
@@ -25,6 +27,7 @@ private:
     std::vector<ClientOrder> clientOrders;
     SupplierOrderContainer supplierOrders;
     Manager manager;
+    EvaluationContainer evaluations;
 
 public:
     PescaTudo();
@@ -34,6 +37,7 @@ public:
     SupplierContainer& getSuppliers();
     std::vector<ClientOrder>& getClientOrders();
     SupplierOrderContainer& getSupplierOrders();
+    EvaluationContainer& getEvaluations();
     Manager& getManager();
     void setManager(const Manager& manager);
 
@@ -43,6 +47,7 @@ public:
     void addProduct(const Product& product);
     void addSupplier(const Supplier& supplier);
     void addSupplierOrder(const SupplierOrder& order);
+    void addEvaluation(const Evaluation& evaluation);
 };
 
 #endif //FSOFT2026_1DC__PESCATUDO_H
