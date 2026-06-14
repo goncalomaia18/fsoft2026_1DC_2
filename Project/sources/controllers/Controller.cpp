@@ -19,6 +19,8 @@
 #include "../../headers/model/SupplierContainer.h"
 #include "../../headers/model/SupplierOrderContainer.h"
 #include "../../headers/model/ProductContainer.h"
+#include "../../headers/model/Evaluation.h"
+#include "../../headers/model/EvaluationContainer.h"
 
 
 Controller::Controller(PescaTudo &store) : store(store) {}
@@ -185,6 +187,8 @@ void Controller::runClientLoggedMenu() {
         std::cout << "1 - View products\n";
         std::cout << "2 - View cart\n";
         std::cout << "3 - View orders\n";
+        std::cout << "4 - Evaluate product\n";
+        std::cout << "5 - View product evaluations\n";
         std::cout << "0 - Logout\n";
         std::cout << "Option: ";
         std::cin >> option;
@@ -198,6 +202,14 @@ void Controller::runClientLoggedMenu() {
                 break;
             case 3:
                 showClientOrders();
+                break;
+
+            case 4:
+                evaluateProduct();
+                break;
+
+            case 5:
+                viewProductEvaluations();
                 break;
 
             case 0:
@@ -1336,3 +1348,106 @@ void Controller::completeSupplierOwnOrder() {
 
     std::cout << "Order completed successfully. Stock updated.\n";
 }
+
+void Controller::evaluateProduct() {
+    if (!isAuthenticated()) {
+        std::cout << "You must be logged in to evaluate a product.\n";
+        return;
+    }
+
+    int productId;
+    int stars;
+    std::string comment;
+
+    std::cout << "\n--- Evaluate Product ---\n";
+
+    listProducts();
+
+    std::cout << "Enter product ID: ";
+    std::cin >> productId;
+
+    bool productExists = false;
+
+    ProductContainer& products = store.getProducts();
+
+    for (int i = 0; i < products.getSize(); i++) {
+        if (products.getProduct(i).getId() == productId) {
+            productExists = true;
+            break;
+        }
+    }
+
+    if (!productExists) {
+        std::cout << "Product not found.\n";
+        return;
+    }
+
+    std::cout << "Stars (1 to 5): ";
+    std::cin >> stars;
+
+    if (stars < 1 || stars > 5) {
+        std::cout << "Invalid number of stars. Use a value between 1 and 5.\n";
+        return;
+    }
+
+    std::cin.ignore();
+
+    std::cout << "Comment: ";
+    std::getline(std::cin, comment);
+
+    int newId = store.getEvaluations().getNextId();
+
+    Evaluation evaluation(
+            newId,
+            productId,
+            loggedInClient->getEmail(),
+            stars,
+            comment
+    );
+
+    store.addEvaluation(evaluation);
+
+    std::cout << "Evaluation added successfully!\n";
+}
+
+void Controller::viewProductEvaluations() {
+    int productId;
+
+    std::cout << "\n--- View Product Evaluations ---\n";
+
+    listProducts();
+
+    std::cout << "Enter product ID: ";
+    std::cin >> productId;
+
+    EvaluationContainer& evaluations = store.getEvaluations();
+
+    bool found = false;
+
+    std::cout << "\n--- Evaluations for Product ID " << productId << " ---\n";
+
+    for (int i = 0; i < evaluations.getSize(); i++) {
+        const Evaluation& evaluation = evaluations.getEvaluation(i);
+
+        if (evaluation.getProductId() == productId) {
+            std::cout << "Evaluation ID: " << evaluation.getId() << "\n";
+            std::cout << "Client: " << evaluation.getClientEmail() << "\n";
+            std::cout << "Stars: " << evaluation.getStars() << "/5\n";
+            std::cout << "Comment: " << evaluation.getComment() << "\n";
+            std::cout << "--------------------------\n";
+
+            found = true;
+        }
+    }
+
+    if (!found) {
+        std::cout << "This product has no evaluations yet.\n";
+        return;
+    }
+
+    double average = evaluations.getAverageStarsByProductId(productId);
+
+    std::cout << "Average stars: " << std::fixed << std::setprecision(1)
+              << average << "/5\n";
+}
+

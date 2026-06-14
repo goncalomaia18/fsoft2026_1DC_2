@@ -53,3 +53,11 @@ void PescaTudo::addSupplier(const Supplier& supplier) {
 void PescaTudo::addSupplierOrder(const SupplierOrder& order) {
     supplierOrders.addOrder(order);
 }
+
+EvaluationContainer& PescaTudo::getEvaluations() {
+    return evaluations;
+}
+
+void PescaTudo::addEvaluation(const Evaluation& evaluation) {
+    evaluations.addEvaluation(evaluation);
+}
